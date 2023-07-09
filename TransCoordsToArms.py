@@ -7,6 +7,8 @@ def get_image_coords(path):
         for line in f:
             # 去除行尾的换行符
             line = line.strip()
+            if line.startswith("#"):
+                continue
             # 分割字符串
             parts = line.split(': ')
             if len(parts) == 2:
@@ -29,6 +31,8 @@ def get_arm_coords(path):
         for line in f:
             # 去除行尾的换行符
             line = line.strip()
+            if line.startswith("#"):
+                continue
             # 将字符串转换为列表
             coords = ast.literal_eval(line)
             # 取前三个数字并添加到列表

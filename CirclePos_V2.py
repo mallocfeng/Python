@@ -6,6 +6,7 @@ from scipy.optimize import minimize
 import sys
 from TransCoordsToArms import transformCoordinateOffset,transformCoordinatePoint,transformCoordinateToImage
 from CircleDetect import find_circles
+from ninepointCalibration import map_space_to_pixel,map_pixel_to_space
 #r'D:\Project3\ICT Automation\picture\6\initial\1.png'
 # 读取图片并进行预处理
 
@@ -513,15 +514,15 @@ def read_rotation_center(filename):
 # arg2 = r'D:\Image\25mm\ActualPic.jpg'
 
 
-arg1 = sys.argv[1]
-arg2 = sys.argv[2]
-arg3 = sys.argv[3]
-arg4 = sys.argv[4]
+# arg1 = sys.argv[1]
+# arg2 = sys.argv[2]
+# arg3 = sys.argv[3]
+# arg4 = sys.argv[4]
 
-# arg1 = "1"
-# arg2 = "D:\\Image\\25mm\\Std.bmp"
-# arg3 = "D:\\Image\\25mm\\"
-# arg4 = "Step1"
+arg1 = "1"
+arg2 = "D:\\Image\\25mm\\Std.bmp"
+arg3 = "D:\\Image\\25mm\\"
+arg4 = "Step1"
 
 #img = cv2.imread(r'D:\Image\25mm\Image_20230601095800134.bmp')
 #Image_20230601095843150.bmp
@@ -534,6 +535,9 @@ arg4 = sys.argv[4]
 CheckMode = arg1
 RootPath = arg3
 StepName = arg4
+
+Camera1calibrationFilePath = [RootPath + "image_coords_O.txt",RootPath + "arm_coords_O.txt"]
+Camera2calibrationFilePath = [RootPath + "image_coords_fixture.txt",RootPath + "arm_coords_fixture.txt"]
 #originalImgPath = arg2
 #ActualPicPath = arg2
 #sys.exit(1)
@@ -542,7 +546,10 @@ rotationCenter = read_rotation_center(RootPath +'rotation_center_' + StepName + 
 
 
 #offset = [1551, 647]
-CenterArmPosition = transformCoordinatePoint(RootPath + "image_coords.txt",RootPath + "arm_coords.txt", rotationCenter)
+CenterArmPosition = transformCoordinatePoint(Camera1calibrationFilePath[0],Camera1calibrationFilePath[1], rotationCenter)
+print(CenterArmPosition)
+CenterArmPosition = map_pixel_to_space(Camera1calibrationFilePath[1],Camera1calibrationFilePath[0],rotationCenter)
+print(CenterArmPosition)
 #print(CenterArmPosition)
 ActualArmPosition = [-510.040754, 160.754379]
 OffsetArmCenterValue = [ ActualArmPosition[0] - CenterArmPosition[0], ActualArmPosition[1] - CenterArmPosition[1]]
@@ -550,7 +557,10 @@ OffsetArmCenterValue = [ ActualArmPosition[0] - CenterArmPosition[0], ActualArmP
 step1_Position = [-540.915615, 103.134551]
 step1_ArmCenterPoint = [step1_Position[0] - OffsetArmCenterValue[0],step1_Position[1] - OffsetArmCenterValue[0]]
 #print(step1_ArmCenterPoint)
-step1_ImageCenterPoint = transformCoordinateToImage(RootPath + "arm_coords.txt",RootPath + "image_coords.txt", step1_ArmCenterPoint)
+step1_ImageCenterPoint = transformCoordinateToImage(Camera1calibrationFilePath[1],Camera1calibrationFilePath[0], step1_ArmCenterPoint)
+print(step1_ImageCenterPoint)
+step1_ImageCenterPoint = map_space_to_pixel(Camera1calibrationFilePath[1],Camera1calibrationFilePath[0],step1_ArmCenterPoint)
+print(step1_ImageCenterPoint)
 rotationCenter = step1_ImageCenterPoint
 #print("ImageCenterPoint :",rotationCenter)
 #rotationCenter = [-1000,500]
@@ -745,7 +755,7 @@ if CheckMode == str(2):
     x,y = centers_original[0][0] - centers_Actual_scaling[0][0],centers_original[0][1] - centers_Actual_scaling[0][1]
     print(f"Offset: {x},{y}")
     print(f"RotationCenter:{rotationCenter}")
-    x,y = transformCoordinateOffset(RootPath + "image_coords.txt",RootPath + "arm_coords.txt", (x, y))
+    x,y = transformCoordinateOffset(Camera1calibrationFilePath[0],Camera1calibrationFilePath[1], (x, y))
     print(f"ArmLocation:{x},{y}")
     print(f"ArmLocation1:{-555.40555 + x},{91.560426 + y}")
     print(f"Scaling Ratio: {scale_factor}")

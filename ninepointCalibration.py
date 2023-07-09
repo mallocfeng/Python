@@ -40,7 +40,7 @@ def map_space_to_pixel(robot_coords_path, pixel_coords_path, space_coord):
 
     # 计算像素坐标
     X, Y = space_coord
-    return [params_inv[0]*X + params_inv[1]*Y + params_inv[2], params_inv[3]*X + params_inv[4]*Y + params_inv[5]]
+    return [round(params_inv[0]*X + params_inv[1]*Y + params_inv[2]), round(params_inv[3]*X + params_inv[4]*Y + params_inv[5])]
 
 def map_pixel_to_space(robot_coords_path, pixel_coords_path, pixel_coord):
     # 读取数据
@@ -67,5 +67,5 @@ def map_pixel_to_space(robot_coords_path, pixel_coords_path, pixel_coord):
     return [params[0]*x + params[1]*y + params[2], params[3]*x + params[4]*y + params[5]]
 
 
-print(map_space_to_pixel(r"D:\Image\25mm\arm_coords.txt", r"D:\Image\25mm\image_coords.txt", [-552.40555, 101.560426]))
-print(map_pixel_to_space(r"D:\Image\25mm\arm_coords.txt", r"D:\Image\25mm\image_coords.txt", [1038,995]))
+#print(map_space_to_pixel(r"D:\Image\25mm\arm_coords.txt", r"D:\Image\25mm\image_coords.txt", [-565.40555, 88.560426]))
+#print(map_pixel_to_space(r"D:\Image\25mm\arm_coords.txt", r"D:\Image\25mm\image_coords.txt", [1038,995]))
