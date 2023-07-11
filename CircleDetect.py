@@ -5,7 +5,7 @@ import numpy as np
 def find_circles(img):
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     # 二值化
-    _, binary_img = cv2.threshold(img, 158, 255, cv2.THRESH_BINARY)
+    _, binary_img = cv2.threshold(img, 200, 255, cv2.THRESH_BINARY)
     
     # 形态学操作
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
@@ -30,7 +30,7 @@ def find_circles(img):
             continue
         arc_length = cv2.arcLength(contour, True)
         radius = arc_length / (2 * np.pi)
-        if not (10 < radius < 300):
+        if not (10 < radius < 200):
             continue
         rect = cv2.fitEllipse(contour)
         ratio = float(rect[1][0]) / float(rect[1][1])

@@ -4,6 +4,7 @@ from matplotlib import pyplot as plt
 import math
 from scipy.optimize import minimize
 import sys
+from CircleDetect import find_circles
 #r'D:\Project3\ICT Automation\picture\6\initial\1.png'
 # 读取图片并进行预处理
 
@@ -15,15 +16,16 @@ def filter_centers(center_list, rectangles_List):
     filtered_centers = []
     if len(rectangles_List) == 0:
         return center_list
-    for center in center_list:
-        x, y = center
-        
+    
+    for rect in rectangles_List:
+        rect_x, rect_y, rect_width, rect_height = rect    
         # 检查每个圆心坐标是否在任何矩形区域内
         inside_rectangle = False
-        for rect in rectangles_List:
-            rect_x, rect_y, rect_width, rect_height = rect
+        for center in center_list:
+            x, y = center
             if rect_x <= x <= rect_x + rect_width and rect_y <= y <= rect_y + rect_height:
                 inside_rectangle = True
+                print(center)
                 break
         
         # 如果圆心在矩形区域内，则将其添加到过滤后的列表中
@@ -145,7 +147,19 @@ def rotate_image_to_horizontal(image, center, angle):
 
     return rotated_image
 
-def detect_circles(image):
+def detect_circles(image,Radius = 20):
+    circles, result_img = find_circles(image)
+    center_list = []  # 存储圆心坐标的列表
+    for circle in circles:
+        if circle[2] > Radius:
+            center_list.append((circle[0],circle[1]))
+    center_list = [(x*2, y*2) for x, y in center_list]
+    center_list = filter_centers(center_list,rectangles)
+    
+    return center_list,result_img  # 返回圆心坐标列表和图片
+
+
+def detect_circles1(image):
     # 读取图像
     #image = cv2.imread(image_path)
     #scale_factor = 0.5
@@ -319,14 +333,14 @@ def rotate_point(x, y, theta, x0, y0):
         np.sin(theta) * (x - x0) + np.cos(theta) * (y - y0) + y0
     )
 
-def objective_func(x0, points, rotated_points):
+def objective_func(x0, points, rotated_points,RotationAangle):
     """
     Objective function to be minimized to find the center of rotation.
     """
     x0, y0 = x0
     error = 0
     for (x, y), (xp, yp) in zip(points, rotated_points):
-        xr, yr = rotate_point(x, y, np.pi/2, x0, y0)  #如果是90度，这里改成 np.pi/2
+        xr, yr = rotate_point(x, y, np.radians(float(RotationAangle)), x0, y0)  #如果是90度，这里改成 np.pi/2
         error += (xr - xp)**2 + (yr - yp)**2
     return error
 
@@ -342,6 +356,8 @@ RootPath + '2.bmp'
 arg1 = sys.argv[1]
 arg2 = sys.argv[2]
 arg3 = sys.argv[3]
+arg4 = sys.argv[4]
+RotationAangle = arg4
 image_path = arg1
 image_Rotate_path = arg2
 image_output_path = arg3
@@ -402,7 +418,7 @@ rotated_points = [centers_rotated[0], centers_rotated[1], centers_rotated[2]]
 # Initial guess for the center of rotation
 x0_initial = (0, 0)
 # Minimize the objective function
-result = minimize(objective_func, x0_initial, args=(points, rotated_points))
+result = minimize(objective_func, x0_initial, args=(points, rotated_points,RotationAangle))
 # The optimal center of rotation
 x0_optimal = result.x
 x0_optimal = (math.ceil(x0_optimal[0]), math.ceil(x0_optimal[1]))

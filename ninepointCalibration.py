@@ -16,8 +16,15 @@ def read_pixel_coords_from_file(file_path):
                 coords_str.append(line.strip())
     return np.array([list(map(int, s.split(": ")[1].split(","))) for s in coords_str])
 
+def getlArmPositionOffset(robot_coords_path, pixel_coords_path, ImgRotationCenterPos,ActualArmPos):
+    CenterArmPosition = map_pixel_to_space(robot_coords_path,pixel_coords_path,ImgRotationCenterPos)
+    #print(CenterArmPosition)
+    #ActualArmPosition = [-510.040754, 160.754379]
+    OffsetArmCenterValue = [ ActualArmPos[0] - CenterArmPosition[0], ActualArmPos[1] - CenterArmPosition[1]]
+    return OffsetArmCenterValue
 
-def map_space_to_pixel(robot_coords_path, pixel_coords_path, space_coord):
+
+def map_space_to_pixel(robot_coords_path, pixel_coords_path, space_coord,offset_coord = [0,0]):
     # 读取数据
     robot_coords_str = []
     pixel_coords_str = []
@@ -37,12 +44,12 @@ def map_space_to_pixel(robot_coords_path, pixel_coords_path, space_coord):
 
     # 使用最小二乘法求解映射参数
     params_inv, _, _, _ = np.linalg.lstsq(A_inv, b_inv, rcond=None)
-
+    space_coord = [space_coord[0] - offset_coord[0],space_coord[1] - offset_coord[1]]
     # 计算像素坐标
     X, Y = space_coord
     return [round(params_inv[0]*X + params_inv[1]*Y + params_inv[2]), round(params_inv[3]*X + params_inv[4]*Y + params_inv[5])]
 
-def map_pixel_to_space(robot_coords_path, pixel_coords_path, pixel_coord):
+def map_pixel_to_space(robot_coords_path, pixel_coords_path, pixel_coord,offset_coord = [0,0]):
     # 读取数据
     robot_coords_str = []
     pixel_coords_str = []
@@ -64,7 +71,7 @@ def map_pixel_to_space(robot_coords_path, pixel_coords_path, pixel_coord):
 
     # 计算空间坐标
     x, y = pixel_coord
-    return [params[0]*x + params[1]*y + params[2], params[3]*x + params[4]*y + params[5]]
+    return [params[0]*x + params[1]*y + params[2] + offset_coord[0], params[3]*x + params[4]*y + params[5] + offset_coord[1]]
 
 
 #print(map_space_to_pixel(r"D:\Image\25mm\arm_coords.txt", r"D:\Image\25mm\image_coords.txt", [-565.40555, 88.560426]))
