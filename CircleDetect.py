@@ -5,7 +5,8 @@ import numpy as np
 def find_circles(img):
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     # 二值化
-    _, binary_img = cv2.threshold(img, 200, 255, cv2.THRESH_BINARY)
+    #_, binary_img = cv2.threshold(img, 158, 255, cv2.THRESH_BINARY)
+    _, binary_img = cv2.threshold(img, 100, 255, cv2.THRESH_BINARY)
     
     # 形态学操作
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))

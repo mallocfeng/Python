@@ -24,10 +24,10 @@ def rotate_point(rotationCenter, centers_original, F_Angle):
 
 
 # Test with some data
-rotationCenter = [0, 0]
-centers_original = [-18087.365521756696, 17251.578869262]
+rotationCenter = [2540, 2438]
+centers_original = [-15677, 19198]
 #centers_original = [-1, 1]
-F_Angle = 1  # degrees
+F_Angle = -0.83  # degrees
 
 x_new, y_new = rotate_point(rotationCenter, centers_original, F_Angle)
 

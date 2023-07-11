@@ -535,15 +535,15 @@ def rotate_point(centers_original,rotationCenter, F_Angle):
 # arg2 = r'D:\Image\25mm\ActualPic.jpg'
 
 
-arg1 = sys.argv[1]
-arg2 = sys.argv[2]
-arg3 = sys.argv[3]
-arg4 = sys.argv[4]
+# arg1 = sys.argv[1]
+# arg2 = sys.argv[2]
+# arg3 = sys.argv[3]
+# arg4 = sys.argv[4]
 
-# arg1 = "2"
-# arg2 = "D:\\Image\\25mm\\Actual.bmp"
-# arg3 = "D:\\Image\\25mm\\"
-# arg4 = "Step1"
+arg1 = "2"
+arg2 = "D:\\Image\\25mm\\Fixture\\Actual.bmp"
+arg3 = "D:\\Image\\25mm\\Fixture\\"
+arg4 = "Step1"
 
 #img = cv2.imread(r'D:\Image\25mm\Image_20230601095800134.bmp')
 #Image_20230601095843150.bmp
@@ -716,8 +716,6 @@ if CheckMode == '1':
         # 遍历中心点坐标列表
         for center_original in centers_original:
             x, y = center_original
-            x, y = rotate_point([x,y],rotationCenter,-0.8765)
-            x, y = x - (4.3102619470433865 * 32.2),y + (3.043215099502908 * 32.2)
             # 将坐标写入文件
             f.write(f"{x},{y}\n")
             print(f"Original CircleCenter: ({x}, {y})")
@@ -786,6 +784,8 @@ for center_Actual in centers_Actual:
     #cv2.putText(img, text, (10, TestLoation), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
     #TestLoation = TestLoation + 30
 #print(f"############")
+centers_Actual = [[1732, 941],[1260, 637]]
+centers_original = [[1830, 744],[1363, 433]]
 
 
 if len(centers_Actual) >= 2:
@@ -793,7 +793,7 @@ if len(centers_Actual) >= 2:
     #F_Angle = calculate_rotation_angle( centers_original[0], centers_original[1], centers_Actual[0], centers_Actual[1],rotationCenter)
     #print("tttt")
 
-    F_Angle = find_parallel_rotation_angle(centers_original,centers_Actual,rotationCenter)
+    F_Angle = find_parallel_rotation_angle(centers_original,centers_Actual,rotationCenter2)
     #F_Angle = 0    
     #New_Centers_original,F_Angle = rotate_points(centers_original,centers_Actual,rotationCenter)
     #F_Angle = 180 - F_Angle
@@ -813,7 +813,6 @@ if len(centers_Actual) >= 2:
     # 计算缩放因子
     scaling_factor = calculate_scaling_factor(distance_Actual, distance_original)
     scale_factor = scaling_factor
-    img = cv2.resize(img, (0, 0), fx=scale_factor, fy=scale_factor)
     centers_Actual_scaling = centers_Actual
     #centers_Actual_scaling = centers_Actual
     for i in range(len(centers_Actual)):
@@ -823,10 +822,10 @@ if len(centers_Actual) >= 2:
     #########################
     #F_Angle = calculate_rotation_angle(centers_Actual[0], centers_Actual[1], centers_original[0], centers_original[1], rotationCenter)
     #旋转+平移恢复图像
-    img = rotate_image_to_horizontal(img, rotationCenter, -F_Angle)
-    x_new, y_new = rotate_point(centers_Actual[0],rotationCenter,-F_Angle)
-    xyOffsert = [centers_original[0][0] - x_new,centers_original[0][1] - y_new]
-    img = translate_image(img,centers_original[0][0] - xyOffsert[0],centers_original[0][1] - xyOffsert[1])
+    x_new, y_new = rotate_point(centers_Actual[0],rotationCenter2,-F_Angle)
+    centers_ActualARM = map_pixel_to_space(Camera2calibrationFilePath[1],Camera2calibrationFilePath[0],Std_IMG_FixtureCirclePoint1,OffsetArmCenterValue2)
+    New_centers_ActualARM = map_pixel_to_space(Camera2calibrationFilePath[1],Camera2calibrationFilePath[0],[x_new, y_new],OffsetArmCenterValue2)
+    xyOffsert = [centers_ActualARM[0] - New_centers_ActualARM[0],centers_ActualARM[1] - New_centers_ActualARM[1]]
     #xyOffsert = [xyOffsert[0]/32.2,xyOffsert[1]/32.2]
 
 #保存最终图像并打印结果
