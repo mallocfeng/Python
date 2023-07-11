@@ -535,15 +535,15 @@ def rotate_point(centers_original,rotationCenter, F_Angle):
 # arg2 = r'D:\Image\25mm\ActualPic.jpg'
 
 
-arg1 = sys.argv[1]
-arg2 = sys.argv[2]
-arg3 = sys.argv[3]
-arg4 = sys.argv[4]
+# arg1 = sys.argv[1]
+# arg2 = sys.argv[2]
+# arg3 = sys.argv[3]
+# arg4 = sys.argv[4]
 
-# arg1 = "2"
-# arg2 = "D:\\Image\\25mm\\Actual.bmp"
-# arg3 = "D:\\Image\\25mm\\"
-# arg4 = "Step1"
+arg1 = "2"
+arg2 = "D:\\Image\\25mm\\Actual.bmp"
+arg3 = "D:\\Image\\25mm\\"
+arg4 = "Step1"
 
 #img = cv2.imread(r'D:\Image\25mm\Image_20230601095800134.bmp')
 #Image_20230601095843150.bmp
@@ -621,6 +621,33 @@ def fixtureToCamera1_IMGPorint(point):
 #夹具位置标定点的pixel位置
 # Original CircleCenter: (1830, 744)
 # Original CircleCenter: (1363, 433)
+#######################################################################
+Std_IMG_FixtureCirclePoint1 = [1830, 744]
+Std_IMG_FixtureCirclePoint2 = [1363, 433]
+
+Std_IMG_FixtureCirclePoint1_Actual = [1732, 941]
+Std_IMG_FixtureCirclePoint2_Actual = [1260, 637]
+
+#第一次用于纠偏机械臂拍照位置 机械臂的旋转中心
+step1_Position = [-540.915615, 103.134551]
+
+#把贴在夹具上的两个定位点标准位置坐标转换成机械臂坐标
+Std_ARM_FixtureCirclePoint1 = map_pixel_to_space(Camera2calibrationFilePath[1],Camera2calibrationFilePath[0],Std_IMG_FixtureCirclePoint1,OffsetArmCenterValue2)
+Std_ARM_FixtureCirclePoint2 = map_pixel_to_space(Camera2calibrationFilePath[1],Camera2calibrationFilePath[0],Std_IMG_FixtureCirclePoint2,OffsetArmCenterValue2)
+Std_ARM_FixturePorintLine =  [Std_ARM_FixtureCirclePoint1,Std_ARM_FixtureCirclePoint2]
+print(Std_ARM_FixturePorintLine)
+#把贴在夹具上的两个定位点实际位置坐标转换成机械臂坐标
+Std_ARM_FixtureCirclePoint1_Actual = map_pixel_to_space(Camera2calibrationFilePath[1],Camera2calibrationFilePath[0],Std_IMG_FixtureCirclePoint1_Actual,OffsetArmCenterValue2)
+Std_ARM_FixtureCirclePoint2_Actual = map_pixel_to_space(Camera2calibrationFilePath[1],Camera2calibrationFilePath[0],Std_IMG_FixtureCirclePoint2_Actual,OffsetArmCenterValue2)
+Std_ARM_FixturePorintLine_Actual =  [Std_ARM_FixtureCirclePoint1_Actual,Std_ARM_FixtureCirclePoint2_Actual]
+print(Std_ARM_FixturePorintLine_Actual)
+
+F_Angle = find_parallel_rotation_angle(Std_ARM_FixturePorintLine,Std_ARM_FixturePorintLine_Actual,step1_Position)
+#Std_ARM_FixtureCirclePoint1_Actual_New = rotate_point(Std_ARM_FixtureCirclePoint1_Actual,step1_Position,-F_Angle)
+#print(Std_ARM_FixtureCirclePoint1_Actual_New)
+#xyOffsert = [Std_ARM_FixtureCirclePoint1[0] - Std_ARM_FixtureCirclePoint1_Actual_New[0],Std_ARM_FixtureCirclePoint1[1] - Std_ARM_FixtureCirclePoint1_Actual_New[1]]
+
+#######################################################################
 
 Std_IMG_FixtureCirclePoint1 = [1830, 744]
 Std_IMG_FixtureCirclePoint2 = [1363, 433]
