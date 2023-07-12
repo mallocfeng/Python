@@ -743,8 +743,8 @@ if CheckMode == '1':
         # 遍历中心点坐标列表
         for center_original in centers_original:
             x, y = center_original
-            x, y = rotate_point([x,y],rotationCenter,-0.8765)
-            x, y = x - (4.3102619470433865 * 32.2),y + (3.043215099502908 * 32.2)
+            #x, y = rotate_point([x,y],rotationCenter,-0.8765)
+            #x, y = x - (4.3102619470433865 * 32.2),y + (3.043215099502908 * 32.2)
             # 将坐标写入文件
             f.write(f"{x},{y}\n")
             print(f"Original CircleCenter: ({x}, {y})")

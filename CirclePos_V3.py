@@ -6,7 +6,7 @@ from scipy.optimize import minimize
 import sys
 from TransCoordsToArms import transformCoordinateOffset,transformCoordinatePoint,transformCoordinateToImage
 from CircleDetect import find_circles
-from ninepointCalibration import map_space_to_pixel,map_pixel_to_space,getlArmPositionOffset
+from ninepointCalibration import map_space_to_pixel,map_pixel_to_space,getlArmPositionOffset,getlImgPositionOffset
 #r'D:\Project3\ICT Automation\picture\6\initial\1.png'
 # 读取图片并进行预处理
 
@@ -567,15 +567,20 @@ rotationCenter = read_rotation_center(RootPath +'rotation_center_Camera1.txt')
 #destinationPos = [-555.40555,91.560426]
 
 #offset = [1551, 647]
-CenterArmPosition = transformCoordinatePoint(Camera1calibrationFilePath[0],Camera1calibrationFilePath[1], rotationCenter)
-print(CenterArmPosition)
-CenterArmPosition = map_pixel_to_space(Camera1calibrationFilePath[1],Camera1calibrationFilePath[0],rotationCenter)
-print(CenterArmPosition)
+# CenterArmPosition = transformCoordinatePoint(Camera1calibrationFilePath[0],Camera1calibrationFilePath[1], rotationCenter)
+# print(CenterArmPosition)
+# CenterArmPosition = map_pixel_to_space(Camera1calibrationFilePath[1],Camera1calibrationFilePath[0],rotationCenter)
+# print(CenterArmPosition)
 ActualArmPosition = [-510.040754, 160.754379]
+
+
+OffsetArmCenterValue = getlArmPositionOffset(Camera1calibrationFilePath[1],Camera1calibrationFilePath[0],rotationCenter,ActualArmPosition)
+OffsetImgCenterValue = getlImgPositionOffset(Camera1calibrationFilePath[1],Camera1calibrationFilePath[0],ActualArmPosition,rotationCenter)
+
 #ActualArmPosition = [-75.527,-449.735]
 #ActualArmPosition = [-78.651, -416.377]
 #OffsetArmCenterValue = [ ActualArmPosition[0] - CenterArmPosition[0], ActualArmPosition[1] - CenterArmPosition[1]]
-OffsetArmCenterValue = getlArmPositionOffset(Camera1calibrationFilePath[1],Camera1calibrationFilePath[0],rotationCenter,ActualArmPosition)
+#OffsetArmCenterValue = getlArmPositionOffset(Camera1calibrationFilePath[1],Camera1calibrationFilePath[0],rotationCenter,ActualArmPosition)
 CenterArmPosition = map_pixel_to_space(Camera1calibrationFilePath[1],Camera1calibrationFilePath[0],rotationCenter,OffsetArmCenterValue)
 print(CenterArmPosition)
 
@@ -600,30 +605,39 @@ rotationCenter2 = read_rotation_center(RootPath +'rotation_center_Camera2.txt')
 CenterArmPosition2 = transformCoordinatePoint(Camera2calibrationFilePath[0],Camera2calibrationFilePath[1], rotationCenter2)
 print(CenterArmPosition2)
 
-ActualArmPosition2 = [-75.527,-449.735]
+ActualArmPosition2 = [-18.2342,-458.4167]
 OffsetArmCenterValue2 = getlArmPositionOffset(Camera2calibrationFilePath[1],Camera2calibrationFilePath[0],rotationCenter2,ActualArmPosition2)
+OffsetImgCenterValue2 = getlImgPositionOffset(Camera2calibrationFilePath[1],Camera2calibrationFilePath[0],ActualArmPosition2,rotationCenter2)
 CenterArmPosition2 = map_pixel_to_space(Camera2calibrationFilePath[1],Camera2calibrationFilePath[0],rotationCenter2,OffsetArmCenterValue2)
 print(CenterArmPosition2)
 
 #第二次用于纠偏机械臂拍照位置
-step2_Position = [-75.527,-449.735]
-step2_ImageCenterPoint = map_space_to_pixel(Camera2calibrationFilePath[1],Camera2calibrationFilePath[0],step2_Position,OffsetArmCenterValue2)
+step2_Position = [-18.2342,-458.4167]
+step2_ImageCenterPoint = map_space_to_pixel(Camera2calibrationFilePath[1],Camera2calibrationFilePath[0],step2_Position,OffsetImgCenterValue2)
 print(step2_ImageCenterPoint)
 rotationCenter2 = step2_ImageCenterPoint
+
+# ActualArmPosition2 = [-178.2342,-458.4167]
+# ttt = map_space_to_pixel(Camera2calibrationFilePath[1],Camera2calibrationFilePath[0],ActualArmPosition2,OffsetImgCenterValue2)
+
+#CenterPoint6: 1427,482
+ttt = map_pixel_to_space(Camera2calibrationFilePath[1],Camera2calibrationFilePath[0],[1664,306],OffsetArmCenterValue2)
+
 
 def fixtureToCamera1_IMGPorint(point):
     Std_IMG_FixtureCirclePoint = point
     Std_ARM_FixtureCirclePoint = map_pixel_to_space(Camera2calibrationFilePath[1],Camera2calibrationFilePath[0],Std_IMG_FixtureCirclePoint,OffsetArmCenterValue2)
     #夹具位置标定点的pixel位置转换成Camera1的像素坐标
-    Std_IMG_FixtureCirclePoint_Camera = map_space_to_pixel(Camera1calibrationFilePath[1],Camera1calibrationFilePath[0],Std_ARM_FixtureCirclePoint,OffsetArmCenterValue)
+    Std_IMG_FixtureCirclePoint_Camera = map_space_to_pixel(Camera1calibrationFilePath[1],Camera1calibrationFilePath[0],Std_ARM_FixtureCirclePoint,OffsetImgCenterValue2)
     return Std_IMG_FixtureCirclePoint_Camera
 
-#夹具位置标定点的pixel位置
-# Original CircleCenter: (1830, 744)
-# Original CircleCenter: (1363, 433)
 
-Std_IMG_FixtureCirclePoint1 = [1830, 744]
-Std_IMG_FixtureCirclePoint2 = [1363, 433]
+#夹具位置标定点的pixel位置
+
+
+#[(1840, 891), (1628, 452)]
+Std_IMG_FixtureCirclePoint1 = [1628, 452]
+Std_IMG_FixtureCirclePoint2 = [1840, 891]
 #夹具位置标定点的pixel位置转换成机械臂坐标
 # Std_ARM_FixtureCirclePoint1 = map_pixel_to_space(Camera2calibrationFilePath[1],Camera2calibrationFilePath[0],rotationCenter2,OffsetArmCenterValue2)
 # Std_ARM_FixtureCirclePoint2 = map_pixel_to_space(Camera2calibrationFilePath[1],Camera2calibrationFilePath[0],rotationCenter2,OffsetArmCenterValue2)
@@ -633,10 +647,9 @@ Std_IMG_FixtureCirclePoint2 = [1363, 433]
 Std_IMG_FixtureCirclePoint1_Camera1 = fixtureToCamera1_IMGPorint(Std_IMG_FixtureCirclePoint1)
 Std_IMG_FixtureCirclePoint2_Camera1 = fixtureToCamera1_IMGPorint(Std_IMG_FixtureCirclePoint2)
 
-# Original CircleCenter: (1732, 941)
-# Original CircleCenter: (1260, 637)
-Std_IMG_FixtureCirclePoint1_Actual = [1732, 941]
-Std_IMG_FixtureCirclePoint2_Actual = [1260, 637]
+#[(1779, 1085), (1557, 650)]
+Std_IMG_FixtureCirclePoint1_Actual = [1558, 652]
+Std_IMG_FixtureCirclePoint2_Actual = [1779, 1085]
 Std_IMG_FixtureCirclePoint1_Actual_Camera1 = fixtureToCamera1_IMGPorint(Std_IMG_FixtureCirclePoint1_Actual)
 Std_IMG_FixtureCirclePoint2_Actual_Camera1 = fixtureToCamera1_IMGPorint(Std_IMG_FixtureCirclePoint2_Actual)
 centers_original = [Std_IMG_FixtureCirclePoint1_Camera1,Std_IMG_FixtureCirclePoint2_Camera1]
@@ -644,7 +657,7 @@ centers_Actual =[Std_IMG_FixtureCirclePoint1_Actual_Camera1,Std_IMG_FixtureCircl
 F_Angle = find_parallel_rotation_angle(centers_original,centers_Actual,rotationCenter)
 #img = rotate_image_to_horizontal(img, rotationCenter, -F_Angle)
 x_new, y_new = rotate_point(centers_Actual[0],rotationCenter,-F_Angle)
-xyOffsert = [centers_original[0][0] - x_new,centers_original[0][1] - y_new]
+xyOffsert = [centers_Actual[0][0] - x_new,centers_Actual[0][1] - y_new]
 print(xyOffsert)
 #计算旋转中心加上偏移后机械臂的xy坐标
 
@@ -784,16 +797,15 @@ for center_Actual in centers_Actual:
     #cv2.putText(img, text, (10, TestLoation), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
     #TestLoation = TestLoation + 30
 #print(f"############")
-centers_Actual = [[1732, 941],[1260, 637]]
-centers_original = [[1830, 744],[1363, 433]]
-
+centers_Actual = [Std_IMG_FixtureCirclePoint1_Actual,Std_IMG_FixtureCirclePoint2_Actual]
+centers_original = [Std_IMG_FixtureCirclePoint1,Std_IMG_FixtureCirclePoint2]
 
 if len(centers_Actual) >= 2:
     #F_Angle = calculate_rotation_angle(centers_Actual[0], centers_Actual[1], centers_original[0], centers_original[1], rotationCenter)
     #F_Angle = calculate_rotation_angle( centers_original[0], centers_original[1], centers_Actual[0], centers_Actual[1],rotationCenter)
     #print("tttt")
 
-    F_Angle = find_parallel_rotation_angle(centers_original,centers_Actual,rotationCenter2)
+    F_Angle = find_parallel_rotation_angle(centers_Actual,centers_original,rotationCenter2)
     #F_Angle = 0    
     #New_Centers_original,F_Angle = rotate_points(centers_original,centers_Actual,rotationCenter)
     #F_Angle = 180 - F_Angle
@@ -807,25 +819,28 @@ if len(centers_Actual) >= 2:
     #original_centers = centers_original
     #original_centers,original_img = detect_circles(original_img)
     # 计算 original_centers 两个点之间的距离
-    distance_original = calculate_distance(centers_original[0], centers_original[1])
-    # 计算 centers_Actual 两个点之间的距离
-    distance_Actual = calculate_distance(centers_Actual[0], centers_Actual[1])
-    # 计算缩放因子
-    scaling_factor = calculate_scaling_factor(distance_Actual, distance_original)
-    scale_factor = scaling_factor
-    centers_Actual_scaling = centers_Actual
-    #centers_Actual_scaling = centers_Actual
-    for i in range(len(centers_Actual)):
-        x, y = centers_Actual[i]
-        centers_Actual_scaling[i] = (x*scale_factor, y*scale_factor)
-    centers_Actual_scaling = rotate_line(centers_Actual_scaling, rotationCenter, F_Angle)
+    # distance_original = calculate_distance(centers_original[0], centers_original[1])
+    # # 计算 centers_Actual 两个点之间的距离
+    # distance_Actual = calculate_distance(centers_Actual[0], centers_Actual[1])
+    # # 计算缩放因子
+    # scaling_factor = calculate_scaling_factor(distance_Actual, distance_original)
+    # scale_factor = scaling_factor
+    # centers_Actual_scaling = centers_Actual
+    # #centers_Actual_scaling = centers_Actual
+    # for i in range(len(centers_Actual)):
+    #     x, y = centers_Actual[i]
+    #     centers_Actual_scaling[i] = (x*scale_factor, y*scale_factor)
+    #centers_Actual_scaling = rotate_line(centers_Actual_scaling, rotationCenter, F_Angle)
     #########################
     #F_Angle = calculate_rotation_angle(centers_Actual[0], centers_Actual[1], centers_original[0], centers_original[1], rotationCenter)
     #旋转+平移恢复图像
-    x_new, y_new = rotate_point(centers_Actual[0],rotationCenter2,-F_Angle)
-    centers_ActualARM = map_pixel_to_space(Camera2calibrationFilePath[1],Camera2calibrationFilePath[0],Std_IMG_FixtureCirclePoint1,OffsetArmCenterValue2)
-    New_centers_ActualARM = map_pixel_to_space(Camera2calibrationFilePath[1],Camera2calibrationFilePath[0],[x_new, y_new],OffsetArmCenterValue2)
-    xyOffsert = [centers_ActualARM[0] - New_centers_ActualARM[0],centers_ActualARM[1] - New_centers_ActualARM[1]]
+    x_new, y_new = rotate_point(centers_original[0],rotationCenter2,-F_Angle)
+    #centers_ActualARM = map_pixel_to_space(Camera2calibrationFilePath[1],Camera2calibrationFilePath[0],Std_IMG_FixtureCirclePoint1,OffsetArmCenterValue2)
+    #New_centers_ActualARM = map_pixel_to_space(Camera2calibrationFilePath[1],Camera2calibrationFilePath[0],[x_new, y_new],OffsetArmCenterValue2)
+    #xyOffsert = [centers_ActualARM[0] - New_centers_ActualARM[0],centers_ActualARM[1] - New_centers_ActualARM[1]]
+    xyOffsert = [centers_Actual[0][0] - x_new,centers_Actual[0][1] - y_new]
+    x,y = transformCoordinateOffset(Camera2calibrationFilePath[0],Camera2calibrationFilePath[1], xyOffsert)
+    print(xyOffsert)
     #xyOffsert = [xyOffsert[0]/32.2,xyOffsert[1]/32.2]
 
 #保存最终图像并打印结果

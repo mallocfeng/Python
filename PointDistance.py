@@ -179,7 +179,8 @@ output_file_path = 'D:\\Image\\25mm\\file.txt'
 with open(output_file_path, 'w') as f:
     for i in range(1, 10):
         # 构造文件名
-        filename = f'Pos{i}.bmp'
+        #filename = f'Pos{i}.bmp'
+        filename = r'D:\Image\25mm\Fixture\Std.bmp'
         # 构造完整的文件路径
         file_path = os.path.join(folder_path, filename)
         
@@ -196,12 +197,8 @@ with open(output_file_path, 'w') as f:
             for center_original in centers_Pos1:
                 x, y = center_original
                 print(f"CenterPoint{i}: {x},{y}\n")
+                f.write(f"CenterPoint{i}: {x},{y}\n")
                 break
-            for center_original in centers_Pos1:
-                    x, y = center_original
-                    # 写入坐标到文件
-                    f.write(f"CenterPoint{i}: {x},{y}\n")
-                    break
         else:
             print(f'File {file_path} does not exist.')
 

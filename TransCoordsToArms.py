@@ -92,8 +92,8 @@ def transformCoordinatePoint(image_coords_path, arm_coords_path, point):
     #print(std_x - offset_x, std_y - offset_y)
     return offset_x, offset_y
 
-image_coords_path = 'D:\\Image\\25mm\\image_coords.txt'
-arm_coords_path = 'D:\\Image\\25mm\\arm_coords.txt'
+#image_coords_path = 'D:\\Image\\25mm\\image_coords.txt'
+#arm_coords_path = 'D:\\Image\\25mm\\arm_coords.txt'
 # x, y = transformCoordinate(image_coords_path, arm_coords_path, (1000,1000))
 # print(x, y)
 

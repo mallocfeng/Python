@@ -26,12 +26,12 @@ def rotate_point(rotationCenter, centers_original, F_Angle):
 
 # Define the points
 rotationCenter = [0, 0]
-step1_Position = [-540.915615, 103.134551]
-StdARM = [57.44133073090249, -428.21138614268955]
-StdARMActual = [53.49370202233297, -421.09205350134323]
+step1_Position = [-18.2342,-458.4167]
+StdARM = [126.16375751118639, -428.35526545174815]
+StdARMActual = [121.18139603570374, -422.2233198608102]
 
 # Define the rotation angles
-rotation_angle = 2  # degrees
+rotation_angle = 0  # degrees
 rotation_angle2 = -0.87  # degrees
 
 # Calculate the new positions after the first rotation
@@ -48,15 +48,23 @@ y_diff = StdARMActual_rotated2[1] - StdARM_rotated[1]
 
 # Create a scatter plot of the points
 plt.figure(figsize=(8, 8))
-plt.scatter(*rotationCenter_rotated, color='red', label='Rotation Center Rotated')
-plt.scatter(*step1_Position, color='blue', label='Step1 Position')
-plt.scatter(*StdARM_rotated, color='green', label='StdARM Rotated')
-plt.scatter(*StdARMActual_rotated, color='purple', label='StdARM Actual Rotated')
-plt.scatter(*StdARMActual_rotated2, color='orange', label='StdARM Actual Rotated2')
+plt.scatter(*rotationCenter_rotated, s=100, color='red', label='Rotation Center Rotated')
+plt.scatter(*step1_Position, s=100, color='blue', label='Step1 Position')
+plt.scatter(*StdARM_rotated, s=100, color='green', label='StdARM Rotated')
+plt.scatter(*StdARMActual_rotated, s=100, color='purple', label='StdARM Actual Rotated')
+plt.scatter(*StdARMActual_rotated2, s=100, color='orange', label='StdARM Actual Rotated2')
 
-# Set the x and y axis limits to make the points more spread out
-plt.xlim(-600, 100)
-plt.ylim(-500, 200)
+# Get the minimum and maximum x and y coordinates for the points
+x_values = [rotationCenter_rotated[0], step1_Position[0], StdARM_rotated[0], StdARMActual_rotated[0], StdARMActual_rotated2[0]]
+y_values = [rotationCenter_rotated[1], step1_Position[1], StdARM_rotated[1], StdARMActual_rotated[1], StdARMActual_rotated2[1]]
+x_min, x_max = min(x_values), max(x_values)
+y_min, y_max = min(y_values), max(y_values)
+
+# Add some padding to the minimum and maximum x and y coordinates for the axes limits
+x_padding = (x_max - x_min) * 0.1
+y_padding = (y_max - y_min) * 0.1
+plt.xlim(x_min - x_padding, x_max + x_padding)
+plt.ylim(y_min - y_padding, y_max + y_padding)
 
 # Draw the x and y axes
 plt.axhline(0, color='black',linewidth=0.5)
@@ -72,6 +80,7 @@ plt.annotate(f'({StdARMActual_rotated2[0]:.2f}, {StdARMActual_rotated2[1]:.2f})'
 plt.annotate(f'x_diff = {x_diff:.2f}', (0, -350), textcoords="offset points", xytext=(-10,10), ha='center')
 plt.annotate(f'y_diff = {y_diff:.2f}', (0, -400), textcoords="offset points", xytext=(-10,10), ha='center')
 
+# Add a legend
 plt.legend()
 
 # Show the plot
