@@ -835,9 +835,9 @@ if len(centers_Actual) >= 2:
     #F_Angle = calculate_rotation_angle(centers_Actual[0], centers_Actual[1], centers_original[0], centers_original[1], rotationCenter)
     #旋转+平移恢复图像
     x_new, y_new = rotate_point(centers_original[0],rotationCenter2,-F_Angle)
-    #centers_ActualARM = map_pixel_to_space(Camera2calibrationFilePath[1],Camera2calibrationFilePath[0],Std_IMG_FixtureCirclePoint1,OffsetArmCenterValue2)
-    #New_centers_ActualARM = map_pixel_to_space(Camera2calibrationFilePath[1],Camera2calibrationFilePath[0],[x_new, y_new],OffsetArmCenterValue2)
-    #xyOffsert = [centers_ActualARM[0] - New_centers_ActualARM[0],centers_ActualARM[1] - New_centers_ActualARM[1]]
+    centers_ActualARM = map_pixel_to_space(Camera2calibrationFilePath[1],Camera2calibrationFilePath[0],Std_IMG_FixtureCirclePoint1,OffsetArmCenterValue2)
+    New_centers_ActualARM = map_pixel_to_space(Camera2calibrationFilePath[1],Camera2calibrationFilePath[0],[x_new, y_new],OffsetArmCenterValue2)
+    xyOffsert = [centers_ActualARM[0] - New_centers_ActualARM[0],centers_ActualARM[1] - New_centers_ActualARM[1]]
     xyOffsert = [centers_Actual[0][0] - x_new,centers_Actual[0][1] - y_new]
     x,y = transformCoordinateOffset(Camera2calibrationFilePath[0],Camera2calibrationFilePath[1], xyOffsert)
     print(xyOffsert)
@@ -871,7 +871,7 @@ if CheckMode == str(2):
     x,y = transformCoordinateOffset(Camera1calibrationFilePath[0],Camera1calibrationFilePath[1], (x, y))
     print(f"ArmLocation:{x},{y}")
     #print(f"ArmLocation1:{destinationPos[0] + x},{destinationPos[1] + y}")
-    print(f"Scaling Ratio: {scale_factor}")
+    #print(f"Scaling Ratio: {scale_factor}")
     print(f"Image Saved in " + RootPath + "final.jpg")
 #else:
     #print(f"{destinationPos[0] + x},{destinationPos[1] + y},{F_Angle}")

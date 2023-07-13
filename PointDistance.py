@@ -180,7 +180,7 @@ with open(output_file_path, 'w') as f:
     for i in range(1, 10):
         # 构造文件名
         #filename = f'Pos{i}.bmp'
-        filename = r'D:\Image\25mm\Fixture\Std.bmp'
+        filename = r'D:\Image\25mm\Actual_Fixture.bmp'
         # 构造完整的文件路径
         file_path = os.path.join(folder_path, filename)
         
