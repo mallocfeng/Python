@@ -170,7 +170,7 @@ def filter_centers(center_list, rectangles_List):
     
     return filtered_centers
 
-def detect_circles(image,Radius = 40):
+def detect_circles(image,Radius = 50):
     circles, result_img = find_circles(image)
     center_list = []  # 存储圆心坐标的列表
     for circle in circles:
@@ -367,6 +367,21 @@ def find_parallel_rotation_angle(centers_original, centers_Actual, rotationCente
 
     return None
 
+def find_parallel_rotation_angle1(centers_original, centers_Actual, rotationCenter):
+    # calculate the slopes of the lines
+    line1 = np.array([centers_original[0], centers_original[1]])
+    line2 = np.array([centers_Actual[0], centers_Actual[1]])
+    m1 = (line1[1, 1] - line1[0, 1]) / (line1[1, 0] - line1[0, 0])
+    m2 = (line2[1, 1] - line2[0, 1]) / (line2[1, 0] - line2[0, 0])
+
+    # calculate the angle between the lines
+    theta_rad = np.arctan(abs((m2 - m1) / (1 + m1 * m2)))
+
+    # convert the angle to degrees
+    theta_deg = np.rad2deg(theta_rad)
+    return theta_deg
+
+
 
 # 旋转直线
 def rotate_line(line_points, rotationCenter, rotation_angle_degrees):
@@ -535,15 +550,15 @@ def rotate_point(centers_original,rotationCenter, F_Angle):
 # arg2 = r'D:\Image\25mm\ActualPic.jpg'
 
 
-# arg1 = sys.argv[1]
-# arg2 = sys.argv[2]
-# arg3 = sys.argv[3]
-# arg4 = sys.argv[4]
+arg1 = sys.argv[1]
+arg2 = sys.argv[2]
+arg3 = sys.argv[3]
+arg4 = sys.argv[4]
 
-arg1 = "2"
-arg2 = "D:\\Image\\25mm\\Actual.bmp"
-arg3 = "D:\\Image\\25mm\\"
-arg4 = "Step1"
+# arg1 = "2"
+# arg2 = "D:\\Image\\25mm\\Actual.bmp"
+# arg3 = "D:\\Image\\25mm\\"
+# arg4 = "Step1"
 
 #img = cv2.imread(r'D:\Image\25mm\Image_20230601095800134.bmp')
 #Image_20230601095843150.bmp
@@ -817,7 +832,8 @@ if len(centers_Actual) >= 2:
     #F_Angle = calculate_rotation_angle( centers_original[0], centers_original[1], centers_Actual[0], centers_Actual[1],rotationCenter)
     #print("tttt")
 
-    F_Angle = find_parallel_rotation_angle(centers_original,centers_Actual,rotationCenter)
+    #F_Angle = find_parallel_rotation_angle(centers_original,centers_Actual,rotationCenter)
+    F_Angle = find_parallel_rotation_angle1(centers_original,centers_Actual,rotationCenter)
     #F_Angle = 0    
     #New_Centers_original,F_Angle = rotate_points(centers_original,centers_Actual,rotationCenter)
     #F_Angle = 180 - F_Angle
@@ -881,8 +897,10 @@ step1_Position = [-540.915615, 103.134551]
 Std_IMG_FixtureCirclePoint1 = [1628, 452]
 Std_IMG_FixtureCirclePoint2 = [1840, 891]
 
-Std_IMG_FixtureCirclePoint1_Actual = [1540, 607]
-Std_IMG_FixtureCirclePoint2_Actual = [1763, 1039]
+#[(1665, 1207), (1441, 772)]
+Std_IMG_FixtureCirclePoint1_Actual = [1441, 772]
+Std_IMG_FixtureCirclePoint2_Actual = [1665, 1207]
+
 
 FixtureLocation = [-18.2342,-458.4167]
 FixtureLocation = [FixtureLocation[0] + xyOffsert_forfixture[0],FixtureLocation[1] + xyOffsert_forfixture[1]]
@@ -906,22 +924,23 @@ Std_ARM_FixtureCirclePoint2_Actual = LocationOffsetCalc(Std_ARM_FixtureCirclePoi
 Std_ARM_FixturePorintLine_Actual =  [Std_ARM_FixtureCirclePoint1_Actual,Std_ARM_FixtureCirclePoint2_Actual]
 print(Std_ARM_FixturePorintLine_Actual)
 #第一次纠偏后，新的夹具纠偏点坐标来计算角度
-FixtureActual_Angle = find_parallel_rotation_angle(Std_ARM_FixturePorintLine,Std_ARM_FixturePorintLine_Actual,FixtureLocation)
+FixtureActual_Angle = find_parallel_rotation_angle1(Std_ARM_FixturePorintLine,Std_ARM_FixturePorintLine_Actual,FixtureLocation)
 
 #Std_ARM_FixtureCirclePoint1 = rotate_point(Std_ARM_FixtureCirclePoint1,FixtureLocation,-FixtureActual_Angle)
 #Std_ARM_FixtureCirclePoint1_Actual = rotate_point(Std_ARM_FixtureCirclePoint1_Actual,FixtureLocation,-FixtureActual_Angle)
 
 
-Fixture_Angle = First_Angle - FixtureActual_Angle 
-Std_ARM_FixtureCirclePoint1 = rotate_point(Std_ARM_FixtureCirclePoint1,FixtureLocation,-Fixture_Angle)
-Std_ARM_FixtureCirclePoint2 = rotate_point(Std_ARM_FixtureCirclePoint2,FixtureLocation,-Fixture_Angle)
-Std_ARM_FixtureCirclePoint1_Actual = rotate_point(Std_ARM_FixtureCirclePoint1_Actual,FixtureLocation,-Fixture_Angle)
-Std_ARM_FixtureCirclePoint2_Actual = rotate_point(Std_ARM_FixtureCirclePoint2_Actual,FixtureLocation,-Fixture_Angle)
+
+Fixture_Angle = First_Angle + FixtureActual_Angle - 0.7
+Std_ARM_FixtureCirclePoint1 = rotate_point(Std_ARM_FixtureCirclePoint1,FixtureLocation,-FixtureActual_Angle)
+# Std_ARM_FixtureCirclePoint2 = rotate_point(Std_ARM_FixtureCirclePoint2,FixtureLocation,-Fixture_Angle)
+# Std_ARM_FixtureCirclePoint1_Actual = rotate_point(Std_ARM_FixtureCirclePoint1_Actual,FixtureLocation,-Fixture_Angle)
+# Std_ARM_FixtureCirclePoint2_Actual = rotate_point(Std_ARM_FixtureCirclePoint2_Actual,FixtureLocation,-Fixture_Angle)
 
 #Std_ARM_FixtureCirclePoint1 = rotate_point(Std_ARM_FixtureCirclePoint1,FixtureLocation,FixtureActual_Angle)
 # Std_ARM_FixtureCirclePoint1 = rotate_point(Std_ARM_FixtureCirclePoint1,FixtureLocation,Fixture_Angle)
 # Std_ARM_FixtureCirclePoint1_Actual = rotate_point(Std_ARM_FixtureCirclePoint1_Actual,FixtureLocation,Fixture_Angle)
-ARM_FixtureCirclePoint1_Offset = [Std_ARM_FixtureCirclePoint1[0] - Std_ARM_FixtureCirclePoint1_Actual[0] ,  Std_ARM_FixtureCirclePoint1[1] - Std_ARM_FixtureCirclePoint1_Actual[1]]
+ARM_FixtureCirclePoint1_Offset = [Std_ARM_FixtureCirclePoint1_Actual[0] - Std_ARM_FixtureCirclePoint1[0] , Std_ARM_FixtureCirclePoint1_Actual[1] - Std_ARM_FixtureCirclePoint1[1]]
 
 
 # Std_ARM_FixtureCirclePoint1_New = rotate_point(Std_ARM_FixtureCirclePoint1,FixtureLocation,-Fixture_Angle)
@@ -936,14 +955,14 @@ ARM_FixtureCirclePoint1_Offset = [Std_ARM_FixtureCirclePoint1[0] - Std_ARM_Fixtu
 
 cv2.imwrite(RootPath + "final.jpg", img,[cv2.IMWRITE_JPEG_QUALITY, 100])
 if CheckMode == str(2):
-    print(f"Rotation Angle: {First_Angle}")
+    print(f"Rotation Angle: {Fixture_Angle}")
     x,y = rotationCenter
     print(f"Center of Rotation: {x},{y}")
     x,y = xyOffsert
     print(f"Offset: {x},{y}")
     print(f"RotationCenter:{rotationCenter}")
     x,y = transformCoordinateOffset(Camera1calibrationFilePath[0],Camera1calibrationFilePath[1], (x, y))
-    # x,y = x - ARM_FixtureCirclePoint1_Offset[0], y - ARM_FixtureCirclePoint1_Offset[1] 
+    x,y = x + ARM_FixtureCirclePoint1_Offset[0], y + ARM_FixtureCirclePoint1_Offset[1] 
     print(f"ArmLocation:{x},{y}")
     #print(f"ArmLocation1:{destinationPos[0] + x},{destinationPos[1] + y}")
     print(f"Scaling Ratio: {scale_factor}")
