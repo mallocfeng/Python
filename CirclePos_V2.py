@@ -930,7 +930,7 @@ FixtureActual_Angle = find_parallel_rotation_angle1(Std_ARM_FixturePorintLine,St
 #Std_ARM_FixtureCirclePoint1_Actual = rotate_point(Std_ARM_FixtureCirclePoint1_Actual,FixtureLocation,-FixtureActual_Angle)
 
 
-
+#固定纠偏0.7 此处需要按实际修改
 Fixture_Angle = First_Angle + FixtureActual_Angle - 0.7
 Std_ARM_FixtureCirclePoint1 = rotate_point(Std_ARM_FixtureCirclePoint1,FixtureLocation,-FixtureActual_Angle)
 # Std_ARM_FixtureCirclePoint2 = rotate_point(Std_ARM_FixtureCirclePoint2,FixtureLocation,-Fixture_Angle)
