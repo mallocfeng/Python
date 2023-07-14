@@ -375,7 +375,7 @@ def find_parallel_rotation_angle(centers_original, centers_Actual):
     m2 = (line2[1, 1] - line2[0, 1]) / (line2[1, 0] - line2[0, 0])
 
     # calculate the angle between the lines
-    theta_rad = np.arctan(abs((m2 - m1) / (1 + m1 * m2)))
+    theta_rad = np.arctan((m1 - m2) / (1 + m1 * m2))
 
     # convert the angle to degrees
     theta_deg = np.rad2deg(theta_rad)
@@ -914,7 +914,7 @@ if len(centers_Actual) >= 2:
     print(Std_ARM_FixturePorintLine_Actual)
     #第一次纠偏后，新的夹具纠偏点坐标来计算角度
     FixtureActual_Angle = find_parallel_rotation_angle(Std_ARM_FixturePorintLine,Std_ARM_FixturePorintLine_Actual)
-
+    FixtureActual_Angle = - FixtureActual_Angle
     #Std_ARM_FixtureCirclePoint1 = rotate_point(Std_ARM_FixtureCirclePoint1,FixtureLocation,-FixtureActual_Angle)
     #Std_ARM_FixtureCirclePoint1_Actual = rotate_point(Std_ARM_FixtureCirclePoint1_Actual,FixtureLocation,-FixtureActual_Angle)
 
