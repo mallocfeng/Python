@@ -550,15 +550,15 @@ def rotate_point(centers_original,rotationCenter, F_Angle):
 # arg2 = r'D:\Image\25mm\ActualPic.jpg'
 
 
-# arg1 = sys.argv[1]
-# arg2 = sys.argv[2]
-# arg3 = sys.argv[3]
-# arg4 = sys.argv[4]
+arg1 = sys.argv[1]
+arg2 = sys.argv[2]
+arg3 = sys.argv[3]
+arg4 = sys.argv[4]
 
-arg1 = "2"
-arg2 = "D:\\Image\\25mm\\Actual.bmp"
-arg3 = "D:\\Image\\25mm\\"
-arg4 = "Step1"
+# arg1 = "2"
+# arg2 = "D:\\Image\\25mm\\Actual.bmp"
+# arg3 = "D:\\Image\\25mm\\"
+# arg4 = "Step1"
 
 #img = cv2.imread(r'D:\Image\25mm\Image_20230601095800134.bmp')
 #Image_20230601095843150.bmp

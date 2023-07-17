@@ -36,7 +36,7 @@ def find_circles(img,binary_value):
             continue
         rect = cv2.fitEllipse(contour)
         ratio = float(rect[1][0]) / float(rect[1][1])
-        if 0.8 < ratio < 1.2:
+        if 0.9 < ratio < 1.1:
             cv2.ellipse(result_img, rect, (0, 255, 255), 2)
             cv2.circle(result_img, (int(rect[0][0]), int(rect[0][1])), 2, (0, 255, 0), 2)
             cv2.putText(result_img, f'Radius: {radius:.2f}', (int(rect[0][0]), int(rect[0][1])), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
