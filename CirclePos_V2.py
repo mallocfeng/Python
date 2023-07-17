@@ -153,17 +153,16 @@ def filter_centers(center_list, rectangles_List):
     filtered_centers = []
     if len(rectangles_List) == 0:
         return center_list
-    for center in center_list:
-        x, y = center
-        
+    
+    for rect in rectangles_List: 
         # 检查每个圆心坐标是否在任何矩形区域内
         inside_rectangle = False
-        for rect in rectangles_List:
+        for center in center_list:
+            x, y = center
             rect_x, rect_y, rect_width, rect_height = rect
             if rect_x <= x <= rect_x + rect_width and rect_y <= y <= rect_y + rect_height:
                 inside_rectangle = True
                 break
-        
         # 如果圆心在矩形区域内，则将其添加到过滤后的列表中
         if inside_rectangle:
             filtered_centers.append(center)
@@ -538,6 +537,21 @@ def rotate_point(centers_original,rotationCenter, F_Angle):
     
     return x_new, y_new
 
+#从指定文件读取所有坐标信息
+# 1184,265
+# 1470,756
+# 如上格式
+def read_coordinates_from_file(file_path):
+    coordinates = []
+
+    with open(file_path, "r") as file:
+        for line in file:
+            line = line.strip()
+            if line:
+                x, y = map(int, line.split(","))
+                coordinates.append((x, y))
+
+    return coordinates
 
 
 #获取参数
@@ -589,10 +603,20 @@ step2_Position = [-18.2342,-458.4167]
 
 #测试夹具纠偏，两个标定点的标准位置和实际拍摄位置
 #[(1763, 1039), (1540, 607)]
+file_path = r"D:\Image\25mm\Std_FixtureTwoLocationPoints.txt"
+coordinates = read_coordinates_from_file(file_path)
+Std_IMG_FixtureCirclePoint1 = coordinates[0]
+Std_IMG_FixtureCirclePoint2 = coordinates[1]
+
 Std_IMG_FixtureCirclePoint1 = [1628, 452]
 Std_IMG_FixtureCirclePoint2 = [1840, 891]
 
 #[(1665, 1207), (1441, 772)]
+file_path = r"D:\Image\25mm\Actual_FixtureTwoLocationPoints.txt"
+coordinates = read_coordinates_from_file(file_path)
+Std_IMG_FixtureCirclePoint1_Actual = coordinates[0]
+Std_IMG_FixtureCirclePoint2_Actual = coordinates[1]
+
 Std_IMG_FixtureCirclePoint1_Actual = [1441, 772]
 Std_IMG_FixtureCirclePoint2_Actual = [1665, 1207]
 

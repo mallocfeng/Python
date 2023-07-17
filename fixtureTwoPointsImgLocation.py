@@ -45,17 +45,16 @@ def filter_centers(center_list, rectangles_List):
     filtered_centers = []
     if len(rectangles_List) == 0:
         return center_list
-    for center in center_list:
-        x, y = center
-        
+    
+    for rect in rectangles_List: 
         # 检查每个圆心坐标是否在任何矩形区域内
         inside_rectangle = False
-        for rect in rectangles_List:
+        for center in center_list:
+            x, y = center
             rect_x, rect_y, rect_width, rect_height = rect
             if rect_x <= x <= rect_x + rect_width and rect_y <= y <= rect_y + rect_height:
                 inside_rectangle = True
                 break
-        
         # 如果圆心在矩形区域内，则将其添加到过滤后的列表中
         if inside_rectangle:
             filtered_centers.append(center)
@@ -63,8 +62,8 @@ def filter_centers(center_list, rectangles_List):
     return filtered_centers
 
 # Function to find circles in an image
-def detect_circles(image,RadiusMin = 50,RadiusMax = 65):
-    circles, result_img = find_circles(image,176)
+def detect_circles(image,RadiusMin = 50,RadiusMax = 65,BinarizationP = 170):
+    circles, result_img = find_circles(image,BinarizationP)
     center_list = []  # 存储圆心坐标的列表
     for circle in circles:
         if circle[2] > RadiusMin and circle[2] < RadiusMax:
@@ -77,13 +76,20 @@ def detect_circles(image,RadiusMin = 50,RadiusMax = 65):
 
 
 
-# arg1 = sys.argv[1]  #加载初始图像
-# arg2 = sys.argv[2]  #需要检测的点的数量
-# arg3 = sys.argv[3]  #检测到的中心点后保存的文件路径，包括路径和文件名
+arg1 = sys.argv[1]  #加载初始图像
+arg2 = sys.argv[2]  #需要检测的点的数量
+arg3 = sys.argv[3]  #检测到的中心点后保存的文件路径，包括路径和文件名
+arg4 = sys.argv[4]  #二值化图像分界数
 
-arg1 = r"D:\Image\25mm\2c.bmp"
-arg2 = 2
-arg3 = r"D:\Image\25mm\output.txt"
+# print(arg1)
+# print(arg2)
+# print(arg3)
+# print(arg4)
+
+# arg1 = r"D:\Image\25mm\Std_Fixture.bmp"
+# arg2 = 2
+# arg3 = r"D:\Image\25mm\output.txt"
+# arg4 = 200
 
 # Create a Tk root widget
 root = Tk()
@@ -94,6 +100,7 @@ root.withdraw() # Hide the main window
 file_path = arg1
 pointQty = arg2
 SaveFilePath = arg3
+BinarizationPara = int(arg4)
 
 # Load the image
 img = cv2.imread(file_path)
@@ -112,7 +119,7 @@ cv2.waitKey(0)
 cv2.destroyAllWindows()
 img = cv2.imread(file_path)
 #img = cv2.resize(img, (img.shape[1] // 2, img.shape[0] // 2))
-circles,result_img = detect_circles(img,50,65)
+circles,result_img = detect_circles(img,50,65,BinarizationPara)
 
 # Process the rectangles to find circles
 #with open(RootPath +'Originalcenters_' + StepName + '.txt', 'w') as f:
@@ -122,8 +129,8 @@ try:
     print("File deleted successfully.")
 except OSError as e:
     print("Error deleting the file:", e)
-    
-if(len(circles) != pointQty):
+
+if(len(circles) != int(pointQty)):
     sys.exit(1)
 
 with open(SaveFilePath, 'w') as f:
@@ -135,9 +142,11 @@ with open(SaveFilePath, 'w') as f:
         f.write(f"{x},{y}\n")
         print(f"CircleCenter: ({x}, {y})")
 f.close        
-result_img = cv2.resize(result_img, (img.shape[1] // 2, img.shape[0] // 2))
-cv2.imshow('image', result_img)
-cv2.waitKey(0)
-
-print("tt")
-cv2.destroyAllWindows()
+# result_img = cv2.resize(result_img, (img.shape[1] // 2, img.shape[0] // 2))
+# cv2.imshow('image', result_img)
+folder_path = os.path.dirname(arg1)
+new_file_name = "output.bmp"
+new_file_path = os.path.join(folder_path, new_file_name)
+cv2.imwrite(new_file_path, result_img)
+# cv2.waitKey(0)
+# cv2.destroyAllWindows()

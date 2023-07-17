@@ -4,9 +4,15 @@ from tkinter import *
 from tkinter import filedialog
 from PIL import Image, ImageTk
 import numpy as np
+import sys
 
 # initialize orig_img as an empty image
 orig_img = np.zeros((500, 500, 3), dtype=np.uint8)
+
+arg1 = sys.argv[1]
+#arg1 = r'D:\Image\25mm\Std_Fixture.bmp'
+
+ImgPath = arg1
 
 def load_image():
     filepath = filedialog.askopenfilename(filetypes=[("Image files", "*.jpg *.png *.bmp")])
@@ -16,18 +22,31 @@ def load_image():
     display_image(orig_img)
 
 def display_image(image):
-    # calculate the new size to fit the canvas
-    ratio = min(canvas.winfo_width() / image.shape[1], canvas.winfo_height() / image.shape[0])
-    new_size = (int(image.shape[1] * ratio), int(image.shape[0] * ratio))
+    global ImgPath
+    global orig_img
+    try:
+        if ImgPath != "":
+            orig_img = cv2.imread(ImgPath)
+            orig_img = cv2.cvtColor(orig_img, cv2.COLOR_BGR2GRAY)
+            #display_image(orig_img)
+            image = orig_img
+        # calculate the new size to fit the canvas
+        ratio = min(canvas.winfo_width() / image.shape[1], canvas.winfo_height() / image.shape[0])
+        new_size = (int(image.shape[1] * ratio), int(image.shape[0] * ratio))
 
-    # resize the image
-    image = cv2.resize(image, new_size)
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    image = Image.fromarray(image)
+        # resize the image
+        image = cv2.resize(image, new_size)
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        image = Image.fromarray(image)
+        
+        image = ImageTk.PhotoImage(image)
+        canvas.create_image(0, 0, anchor=NW, image=image)
+        canvas.image = image
+        ImgPath = ""
+    except Exception as e:
+        return
     
-    image = ImageTk.PhotoImage(image)
-    canvas.create_image(0, 0, anchor=NW, image=image)
-    canvas.image = image
+    
 
 def adjust_threshold(val):
     if orig_img.size > 0:
@@ -47,7 +66,7 @@ def resize_image(event):
 root = Tk()
 
 # create a canvas to display the image
-canvas = Canvas(root, width=1000, height=1000, bg='white')
+canvas = Canvas(root, width=1000, height=600, bg='white')
 canvas.grid(row=0, column=0, sticky=N+S+E+W)
 
 # configure the row and column weights
@@ -74,3 +93,4 @@ btn_save.pack(side=LEFT)
 root.bind('<Configure>', resize_image)
 
 root.mainloop()
+
