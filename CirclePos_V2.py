@@ -597,6 +597,7 @@ rotationCenter = read_rotation_center(RootPath +'rotation_center_Camera1.txt')
 #第一次用于纠偏机械臂拍照位置
 step1_Position = [-540.915615, 103.134551]
 #第二次拍摄用上相机取得旋转中心机械臂坐标
+#坐标存在问题，需要确认
 ActualArmPosition2 = [-75.527,-449.735]
 #第二次用于纠偏机械臂拍照位置
 step2_Position = [-18.2342,-458.4167]

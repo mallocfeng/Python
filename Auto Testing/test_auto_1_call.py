@@ -54,6 +54,7 @@ position_pick_bottom = 11.873173
 # 目标吸取位置
 step_pick_position = [-594.561328, -599.410647, 60, 3.141593, 0.0, -0.950649]
 position_put_top = 170
+position_put_end_top = 281.718
 position_put_bottom = 95.802602
 # position_put_bottom = 92.802602
 # 目标放置位置
@@ -267,21 +268,23 @@ def move_to_put(input_offset_x, input_offset_y, input_rotate):
     ret = robot.linear_move(step_put_position_top,ABS,True,SPEED_HIGH)
     time.sleep(1)
     
-    # step_put_position_down = get_replace_locations(offset_step_put_position, position_put_bottom)
-    # ret = robot.linear_move(step_put_position_down,ABS,True,SPEED_LOW)
-    # # print(ret[0])
-    # time.sleep(1)
+    step_put_position_down = get_replace_locations(offset_step_put_position, position_put_bottom)
+    ret = robot.linear_move(step_put_position_down,ABS,True,SPEED_LOW)
+    # print(ret[0])
+    time.sleep(1)
     
-    # close_io(INHALING_IO_INDEX)
-    # time.sleep(0.5)
+    close_io(INHALING_IO_INDEX)
+    time.sleep(0.5)
+    close_io(FIX_IO_INDEX)
 
     # step_put_position_up = get_replace_locations(step_put_position, position_move_top)
-    # ret = robot.linear_move(step_put_position_up,ABS,True,SPEED_MID)
-    # time.sleep(0.5)
-    
-    # close_io(FIX_IO_INDEX)
+    step_pick_position_up = get_replace_locations([step_put_position[0] - 50, step_put_position[1], step_put_position[2], step_put_position[3], step_put_position[4], step_put_position[5]], position_put_end_top)
 
-    # step_pick_position_up = get_replace_locations(step_pick_position, position_move_top)
+    ret = robot.linear_move(step_pick_position_up,ABS,True,SPEED_MID)
+    time.sleep(0.5)
+    
+
+    # step_pick_position_up = get_replace_locations([step_pick_position[0] - 20, step_pick_position[1], step_pick_position[2], step_pick_position[3], step_pick_position[4], step_pick_position[5]], position_put_end_top)
     # ret = robot.linear_move(step_pick_position_up,ABS,True,SPEED_HIGH)
     # time.sleep(0.5)
     
