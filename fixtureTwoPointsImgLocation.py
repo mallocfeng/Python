@@ -74,12 +74,31 @@ def detect_circles(image,RadiusMin = 50,RadiusMax = 65,BinarizationP = 170):
     
     return center_list,result_img  # 返回圆心坐标列表和图片
 
+def read_xy_coordinates_from_file(file_path):
+    xy_coordinates = []
 
+    with open(file_path, "r") as file:
+        for line in file:
+            line = line.strip()
+            if line:
+                x, y = map(int, line.split(","))
+                xy_coordinates.append((x, y))
+
+    return xy_coordinates
+
+
+#D:\\Image\\25mm\\ActualBoardFixturePosCheck1.bmp -1 D:\\Image\\25mm\\StdBoardOnFixturePointPos1.txt 191
 
 arg1 = sys.argv[1]  #加载初始图像
 arg2 = sys.argv[2]  #需要检测的点的数量
 arg3 = sys.argv[3]  #检测到的中心点后保存的文件路径，包括路径和文件名
 arg4 = sys.argv[4]  #二值化图像分界数
+
+# arg1 = "D:\\Image\\25mm\\ActualBoardFixturePosCheck1.bmp"
+# arg2 = -1
+# arg3 = "D:\\Image\\25mm\\StdBoardOnFixturePointPos1.txt"
+# arg4 = 191
+
 
 # print(arg1)
 # print(arg2)
@@ -102,6 +121,25 @@ pointQty = arg2
 SaveFilePath = arg3
 BinarizationPara = int(arg4)
 
+#如果是check模式，只需要从StdBoardOnFixturePointPos1.txt
+#和StdBoardOnFixturePointPos2.txt中读取坐标信息，画一个框
+#赋值给rectangles，不需要弹出图片区域选择框
+if(int(pointQty) == -1):
+    xy_coordinates = read_xy_coordinates_from_file(SaveFilePath)
+    x,y = xy_coordinates[0]
+    print(f"DetectCenter: ({x}, {y})")
+    rect = (x - 100, y - 100, 200, 200)
+    #rect = (x, y, width, height)
+    rectangles.append(rect)
+
+    img = cv2.imread(file_path)
+    circles,result_img = detect_circles(img,30,65,BinarizationPara)
+    for center_original in circles:
+        x, y = center_original
+        print(f"CircleCenter: ({x}, {y})")
+        break
+    sys.exit(0)
+
 # Load the image
 img = cv2.imread(file_path)
 
@@ -119,7 +157,7 @@ cv2.waitKey(0)
 cv2.destroyAllWindows()
 img = cv2.imread(file_path)
 #img = cv2.resize(img, (img.shape[1] // 2, img.shape[0] // 2))
-circles,result_img = detect_circles(img,50,65,BinarizationPara)
+circles,result_img = detect_circles(img,30,65,BinarizationPara)
 
 # Process the rectangles to find circles
 #with open(RootPath +'Originalcenters_' + StepName + '.txt', 'w') as f:

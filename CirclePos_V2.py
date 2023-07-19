@@ -574,6 +574,13 @@ arg4 = sys.argv[4]
 # arg3 = "D:\\Image\\25mm\\"
 # arg4 = "Step1"
 
+# arg1 = "1"
+# arg2 = "D:\\Image\\25mm\\Std.bmp"
+# arg3 = "D:\\Image\\25mm\\"
+# arg4 = "Camera1"
+
+#1 D:\\Image\\25mm\\Std.bmp D:\\Image\\25mm\\ Camera1
+
 #img = cv2.imread(r'D:\Image\25mm\Image_20230601095800134.bmp')
 #Image_20230601095843150.bmp
 #打开原始图像
