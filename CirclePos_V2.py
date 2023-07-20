@@ -606,6 +606,7 @@ step1_Position = [-540.915615, 103.134551]
 #第二次拍摄用上相机取得旋转中心机械臂坐标
 #坐标存在问题，需要确认
 ActualArmPosition2 = [-75.527,-449.735]
+ActualArmPosition2 = [-18.234,-458.417] #修改过的新的上相机旋转中心坐标 rotation_center_Camera2.txt也同时更新过 bak目录下的任然是老坐标
 #第二次用于纠偏机械臂拍照位置
 step2_Position = [-18.2342,-458.4167]
 
@@ -616,8 +617,16 @@ coordinates = read_coordinates_from_file(file_path)
 Std_IMG_FixtureCirclePoint1 = coordinates[0]
 Std_IMG_FixtureCirclePoint2 = coordinates[1]
 
+#新夹具偏转后坐标
+#CircleCenter: (1258, 365)
+#CircleCenter: (1475, 803)
+
+#old
 Std_IMG_FixtureCirclePoint1 = [1628, 452]
 Std_IMG_FixtureCirclePoint2 = [1840, 891]
+#new
+Std_IMG_FixtureCirclePoint1 = [1258, 365]
+Std_IMG_FixtureCirclePoint2 = [1475, 803]
 
 #[(1665, 1207), (1441, 772)]
 file_path = r"D:\Image\25mm\Actual_FixtureTwoLocationPoints.txt"
@@ -625,8 +634,12 @@ coordinates = read_coordinates_from_file(file_path)
 Std_IMG_FixtureCirclePoint1_Actual = coordinates[0]
 Std_IMG_FixtureCirclePoint2_Actual = coordinates[1]
 
-Std_IMG_FixtureCirclePoint1_Actual = [1441, 772]
-Std_IMG_FixtureCirclePoint2_Actual = [1665, 1207]
+#新夹具偏转后坐标
+#CircleCenter: (1426, 484)
+#CircleCenter: (1632, 927)
+
+Std_IMG_FixtureCirclePoint1_Actual = [1426, 484]
+Std_IMG_FixtureCirclePoint2_Actual = [1632, 927]
 
 #offset = [1551, 647]
 CenterArmPosition = transformCoordinatePoint(Camera1calibrationFilePath[0],Camera1calibrationFilePath[1], rotationCenter)
@@ -953,6 +966,8 @@ if len(centers_Actual) >= 2:
 
     #固定纠偏0.7 此处需要按实际修改
     Fixture_Angle = First_Angle + FixtureActual_Angle - 0.7
+
+
     Std_ARM_FixtureCirclePoint1 = rotate_point(Std_ARM_FixtureCirclePoint1,FixtureLocation,-FixtureActual_Angle)
     # Std_ARM_FixtureCirclePoint2 = rotate_point(Std_ARM_FixtureCirclePoint2,FixtureLocation,-Fixture_Angle)
     # Std_ARM_FixtureCirclePoint1_Actual = rotate_point(Std_ARM_FixtureCirclePoint1_Actual,FixtureLocation,-Fixture_Angle)

@@ -273,15 +273,15 @@ def move_to_put(input_offset_x, input_offset_y, input_rotate):
     # print(ret[0])
     time.sleep(1)
     
-    close_io(INHALING_IO_INDEX)
-    time.sleep(0.5)
-    close_io(FIX_IO_INDEX)
+    # close_io(INHALING_IO_INDEX)
+    # time.sleep(0.5)
+    # close_io(FIX_IO_INDEX)
 
-    # step_put_position_up = get_replace_locations(step_put_position, position_move_top)
-    step_pick_position_up = get_replace_locations([step_put_position[0] - 50, step_put_position[1], step_put_position[2], step_put_position[3], step_put_position[4], step_put_position[5]], position_put_end_top)
+    # # step_put_position_up = get_replace_locations(step_put_position, position_move_top)
+    # step_pick_position_up = get_replace_locations([step_put_position[0] - 50, step_put_position[1], step_put_position[2], step_put_position[3], step_put_position[4], step_put_position[5]], position_put_end_top)
 
-    ret = robot.linear_move(step_pick_position_up,ABS,True,SPEED_MID)
-    time.sleep(0.5)
+    # ret = robot.linear_move(step_pick_position_up,ABS,True,SPEED_MID)
+    # time.sleep(0.5)
     
 
     # step_pick_position_up = get_replace_locations([step_pick_position[0] - 20, step_pick_position[1], step_pick_position[2], step_pick_position[3], step_pick_position[4], step_pick_position[5]], position_put_end_top)

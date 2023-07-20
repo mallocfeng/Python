@@ -148,7 +148,7 @@ def rotate_image_to_horizontal(image, center, angle):
     return rotated_image
 
 def detect_circles(image,Radius = 20):
-    circles, result_img = find_circles(image)
+    circles, result_img = find_circles(image,191)
     center_list = []  # 存储圆心坐标的列表
     for circle in circles:
         if circle[2] > Radius:
@@ -357,16 +357,25 @@ arg1 = sys.argv[1]
 arg2 = sys.argv[2]
 arg3 = sys.argv[3]
 arg4 = sys.argv[4]
-RotationAangle = arg4
+
+#D:\\Image\\25mm\\Camera2StdRotationCenter.bmp D:\\Image\\25mm\\Camera2StdRotationCenter15.bmp D:\\Image\\25mm\\final.jpg 15
+# arg1 = "D:\\Image\\25mm\\Camera2StdRotationCenter.bmp"
+# arg2 = "D:\\Image\\25mm\\Camera2StdRotationCenter15.bmp"
+# arg3 = "D:\\Image\\25mm\\final.jpg"
+# arg4 = 10
+
+
 image_path = arg1
 image_Rotate_path = arg2
 image_output_path = arg3
+RotationAangle = arg4
+
 image = cv2.imread(image_path)
 
 # 增加对比度
-alpha = 2  # 对比度增益因子，大于1增加对比度，小于1减小对比度
-beta = -200   # 亮度调整参数，可以为0
-image = cv2.convertScaleAbs(image, alpha=alpha, beta=beta)
+#alpha = 2  # 对比度增益因子，大于1增加对比度，小于1减小对比度
+#beta = -200   # 亮度调整参数，可以为0
+#image = cv2.convertScaleAbs(image, alpha=alpha, beta=beta)
 rectangles = []
 filter_centers_GUI(image_path)
 
@@ -387,9 +396,9 @@ print(f"夹角：{angle} 度")
 
 image = cv2.imread(image_Rotate_path)
 # 增加对比度
-alpha = 2  # 对比度增益因子，大于1增加对比度，小于1减小对比度
-beta = -200   # 亮度调整参数，可以为0
-image = cv2.convertScaleAbs(image, alpha=alpha, beta=beta)
+#alpha = 2  # 对比度增益因子，大于1增加对比度，小于1减小对比度
+#beta = -200   # 亮度调整参数，可以为0
+#image = cv2.convertScaleAbs(image, alpha=alpha, beta=beta)
 
 #scale_factor = 1
 #image = cv2.resize(image, (0, 0), fx=scale_factor, fy=scale_factor)
