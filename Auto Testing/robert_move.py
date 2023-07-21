@@ -47,7 +47,8 @@ args = parser.parse_args()
 
 
 
-model_path = 'D:\\Image\\25mm\\model-A.ini'
+# model_path = 'D:\\Image\\25mm\\model-A.ini'
+model_path = 'C:\\Yandle\\Develop\\Auto-Testing\\config\\model-A.ini'
 # nine_move_name = 'Camera1_Nine'
 # rotate_move_name = 'Camera1_Rotate'
 # camera_arm_coords_name = 'camera1_arm_coords.txt'
@@ -139,7 +140,7 @@ def move_9_coordinates(index):
             x, y, z, xr, yr, zr = coordinate
             # 在这里进行对每个坐标的进一步处理
             # print(f"Coordinate: {x}, {y}, {z}")
-            ret = robot.linear_move(coordinate, ABS, True, SPEED_MID)
+            ret = robot.linear_move(coordinate, ABS, True, SPEED_HIGH)
             time.sleep(0.5)
             robot.logout()
             return
@@ -152,7 +153,7 @@ def move_to_step_name(title):
     
     location = get_step_location(title)
     location = [float(num) for num in location.split(",")]
-    ret = robot.linear_move(location, ABS, True, SPEED_MID)
+    ret = robot.linear_move(location, ABS, True, SPEED_HIGH)
     robot.logout()  
 
 def move_to_rotate(point):

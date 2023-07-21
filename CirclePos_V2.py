@@ -7,6 +7,7 @@ import sys
 from TransCoordsToArms import transformCoordinateOffset,transformCoordinatePoint,transformCoordinateToImage
 from CircleDetect import find_circles
 from ninepointCalibration import map_space_to_pixel,map_pixel_to_space,getlArmPositionOffset,getlImgPositionOffset
+import TxtFileRW as FileRW
 #r'D:\Project3\ICT Automation\picture\6\initial\1.png'
 # 读取图片并进行预处理
 
@@ -622,8 +623,8 @@ Std_IMG_FixtureCirclePoint2 = coordinates[1]
 #CircleCenter: (1475, 803)
 
 #old
-Std_IMG_FixtureCirclePoint1 = [1628, 452]
-Std_IMG_FixtureCirclePoint2 = [1840, 891]
+# Std_IMG_FixtureCirclePoint1 = [1628, 452]
+# Std_IMG_FixtureCirclePoint2 = [1840, 891]
 #new
 Std_IMG_FixtureCirclePoint1 = [1258, 365]
 Std_IMG_FixtureCirclePoint2 = [1475, 803]
@@ -638,8 +639,17 @@ Std_IMG_FixtureCirclePoint2_Actual = coordinates[1]
 #CircleCenter: (1426, 484)
 #CircleCenter: (1632, 927)
 
-Std_IMG_FixtureCirclePoint1_Actual = [1426, 484]
-Std_IMG_FixtureCirclePoint2_Actual = [1632, 927]
+coordinates = FileRW.read_xy_coordinates_from_file(RootPath + 'Actual_FixtureTwoLocationPoints.txt')
+
+if len(coordinates) >= 2:
+    Std_IMG_FixtureCirclePoint1_Actual, Std_IMG_FixtureCirclePoint2_Actual = coordinates[:2]
+    #Std_IMG_FixtureCirclePoint1_Actual = [1426, 484]
+    #Std_IMG_FixtureCirclePoint2_Actual = [1632, 927]
+else:
+    print("Error: File does not contain enough coordinates.")
+    sys.exit(0)
+
+
 
 #offset = [1551, 647]
 CenterArmPosition = transformCoordinatePoint(Camera1calibrationFilePath[0],Camera1calibrationFilePath[1], rotationCenter)
@@ -966,7 +976,7 @@ if len(centers_Actual) >= 2:
 
     #固定纠偏0.7 此处需要按实际修改
     Fixture_Angle = First_Angle + FixtureActual_Angle - 0.7
-
+    #Fixture_Angle = First_Angle
 
     Std_ARM_FixtureCirclePoint1 = rotate_point(Std_ARM_FixtureCirclePoint1,FixtureLocation,-FixtureActual_Angle)
     # Std_ARM_FixtureCirclePoint2 = rotate_point(Std_ARM_FixtureCirclePoint2,FixtureLocation,-Fixture_Angle)

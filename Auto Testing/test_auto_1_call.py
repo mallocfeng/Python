@@ -56,6 +56,7 @@ step_pick_position = [-594.561328, -599.410647, 60, 3.141593, 0.0, -0.950649]
 position_put_top = 170
 position_put_end_top = 281.718
 position_put_bottom = 95.802602
+position_pick_put_bottom = 80.802602
 # position_put_bottom = 92.802602
 # 目标放置位置
 # step_put_position = [-536.670292 - 5.6104, -595.610338 + 2.018, 63.511211, 3.141593, 0.0, -0.409395 - (2.062 / 180 * PI)]
@@ -187,6 +188,31 @@ def move_to_pick():
     time.sleep(1)
     
 
+def move_to_pick_back():
+    # robot.login()#登录
+    robot.power_on() #上电
+    robot.enable_robot()
+
+    step_pick_position_up = get_replace_locations(step_pick_position, position_move_top)
+    ret = robot.linear_move(step_pick_position_up,ABS,True,SPEED_HIGH)
+    time.sleep(0.2)
+
+    step_pick_position_down = get_replace_locations(step_pick_position, position_pick_bottom + 5)
+    ret = robot.linear_move(step_pick_position_down,ABS,True,SPEED_HIGH)
+    # print(ret[0])
+    time.sleep(0.2)
+    
+    close_io(INHALING_IO_INDEX)
+    time.sleep(0.2)
+
+    step_pick_position_up = get_replace_locations(step_pick_position, position_move_top)
+    ret = robot.linear_move(step_pick_position_up,ABS,True,SPEED_HIGH)
+    time.sleep(0.5)
+    
+    close_io(FIX_IO_INDEX)
+    time.sleep(0.2)
+    
+
 def move_to_rotate():
     #  单位：mm
     # robot.login()#登录
@@ -273,21 +299,64 @@ def move_to_put(input_offset_x, input_offset_y, input_rotate):
     # print(ret[0])
     time.sleep(1)
     
-    # close_io(INHALING_IO_INDEX)
-    # time.sleep(0.5)
-    # close_io(FIX_IO_INDEX)
+    close_io(INHALING_IO_INDEX)
+    time.sleep(0.5)
+    close_io(FIX_IO_INDEX)
 
-    # # step_put_position_up = get_replace_locations(step_put_position, position_move_top)
-    # step_pick_position_up = get_replace_locations([step_put_position[0] - 50, step_put_position[1], step_put_position[2], step_put_position[3], step_put_position[4], step_put_position[5]], position_put_end_top)
+    # step_put_position_up = get_replace_locations(step_put_position, position_move_top)
+    step_pick_position_up = get_replace_locations([step_put_position[0] - 50, step_put_position[1], step_put_position[2], step_put_position[3], step_put_position[4], step_put_position[5]], position_put_end_top)
 
-    # ret = robot.linear_move(step_pick_position_up,ABS,True,SPEED_MID)
-    # time.sleep(0.5)
+    ret = robot.linear_move(step_pick_position_up,ABS,True,SPEED_MID)
+    time.sleep(0.5)
     
 
     # step_pick_position_up = get_replace_locations([step_pick_position[0] - 20, step_pick_position[1], step_pick_position[2], step_pick_position[3], step_pick_position[4], step_pick_position[5]], position_put_end_top)
     # ret = robot.linear_move(step_pick_position_up,ABS,True,SPEED_HIGH)
     # time.sleep(0.5)
+
+
+
+def move_to_pick_fixture():
+    #  单位：mm
+    # robot.login()#登录
+    robot.power_on() #上电
+    robot.enable_robot()
+    # print("move1")
+    #阻塞 沿z轴负方向 以20mm/s 运动60mm
+
+    offset_step_put_position = [step_put_position[0],
+                                step_put_position[1],
+                                step_put_position[2],
+                                step_put_position[3],
+                                step_put_position[4],
+                                step_put_position[5],
+                                ]
+    # 移动到夹具上方
+    step_put_position_top = get_replace_locations(offset_step_put_position, position_put_top)
+    ret = robot.linear_move(step_put_position_top,ABS,True,SPEED_HIGH)
+    time.sleep(0.2)
     
+    open_io(BLOW_IO_INDEX)
+    time.sleep(0.2)
+    close_io(BLOW_IO_INDEX)
+    time.sleep(0.2)
+    
+    step_put_position_down = get_replace_locations(offset_step_put_position, position_pick_put_bottom)
+    ret = robot.linear_move(step_put_position_down,ABS,True,SPEED_MID)
+    # print(ret[0])
+    time.sleep(0.5)
+    
+    
+    open_io(FIX_IO_INDEX)
+    time.sleep(0.1)
+
+    open_io(INHALING_IO_INDEX)
+    time.sleep(0.5)
+
+    step_pick_position_up = get_replace_locations(step_put_position, position_move_top)
+    ret = robot.linear_move(step_pick_position_up,ABS,True,SPEED_MID)
+    time.sleep(0.5)
+
 
 if (args.s):
     step = int(args.s)
@@ -305,6 +374,10 @@ if (args.s):
         r = float(args.r)
         #if((x < 15 and x > -15) and (y < 15 and y > -15) (r < 15 and r > -15)):
         move_to_put(x, y, r)
+    elif step == 5:
+        move_to_pick_back()
+    elif step == 6:
+        move_to_pick_fixture()
        
 
 robot.logout()
