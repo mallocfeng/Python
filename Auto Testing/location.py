@@ -66,7 +66,7 @@ def get_location():
         config.read(config_file)
 
         # 检查步骤号对应的节是否存在于配置中
-        section_name = f'Step{step_no}'
+        section_name = f'{step_no}'
         if config.has_section(section_name):
             location = config.get(section_name, 'location')
             # print(location)
@@ -105,13 +105,13 @@ def save_params():
         config.read(config_file)
 
     # 将步骤号和位置信息添加到配置对象中
-    section_name = f'Step{step_no}'
+    section_name = f'{step_no}'
     config[section_name] = {'location': ','.join(str(coord) for coord in final_location)}
 
     # 将配置对象写入配置文件
     with open(config_file, 'w') as file:
         config.write(file)
-        print(f"Configuration saved to {config_file}.")
+        print(f"Configuration saved to{{aaaa}} {config_file}.")
     
 
 def read_params():
@@ -134,7 +134,7 @@ def check_position(position):
         return False
     
 # step_no = 1
-# model_no = 'model-A'
+# model_no = 'CalcConfig'
 # write_flag = True
 if model_no != '' and step_no == '':
     
@@ -146,7 +146,7 @@ elif step_no != '' and model_no == '':
         read_flag = True
         
     # config_file = os.path.join(os.path.join(current_directory, config_dir), f'{model_no}.ini')
-    
+    print(socket_config_path)
     config = configparser.ConfigParser()
     if config.read(socket_config_path):
         if config.has_section(socket_config_name):
@@ -154,7 +154,7 @@ elif step_no != '' and model_no == '':
     if model_no == '':
         print('pls set current model first!')
 
-    config_file = os.path.join(model_no, 'config.ini')
+    config_file = os.path.join(model_no, 'CalcConfig.ini')
     print(config_file)
     if read_flag:
         read_params()
@@ -163,5 +163,12 @@ elif step_no != '' and model_no == '':
 else:
     print("Please input the correct params")
 
+# 先初始化项目路径
+# py .\location.py -model D:\Image\25mm
 
-# py .\main.py -step 2 -model model-A
+# 读取配置文件中对应step的location
+# py .\location.py -step {step名字} -read
+
+# 将当前机械臂坐标信息，写入对应step中
+# py .\location.py -step {step名字} -write
+

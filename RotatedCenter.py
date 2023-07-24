@@ -5,6 +5,8 @@ import math
 from scipy.optimize import minimize
 import sys
 from CircleDetect import find_circles
+import configparser
+import os
 #r'D:\Project3\ICT Automation\picture\6\initial\1.png'
 # 读取图片并进行预处理
 
@@ -359,16 +361,23 @@ arg3 = sys.argv[3]
 arg4 = sys.argv[4]
 
 #D:\\Image\\25mm\\Camera2StdRotationCenter.bmp D:\\Image\\25mm\\Camera2StdRotationCenter15.bmp D:\\Image\\25mm\\final.jpg 15
-# arg1 = "D:\\Image\\25mm\\Camera2StdRotationCenter.bmp"
-# arg2 = "D:\\Image\\25mm\\Camera2StdRotationCenter15.bmp"
+# arg1 = "D:\\Image\\25mm\\Camera1StdRotationCenter.bmp"
+# arg2 = "D:\\Image\\25mm\\Camera1StdRotationCenter90.bmp"
 # arg3 = "D:\\Image\\25mm\\final.jpg"
-# arg4 = 10
+# arg4 = -90
+
+RootPath = os.path.dirname(arg1) + "\\"
 
 
 image_path = arg1
 image_Rotate_path = arg2
 image_output_path = arg3
 RotationAangle = arg4
+CameraID = "Camera1"
+if(int(RotationAangle) == 90):
+    CameraID = "Camera1"
+if(int(RotationAangle) == 10):
+    CameraID = "Camera2"
 
 image = cv2.imread(image_path)
 
@@ -446,9 +455,9 @@ cv2.imwrite(image_output_path, img,[cv2.IMWRITE_JPEG_QUALITY, 100])
 scale_factor = 0.5
 img = cv2.resize(img, (0, 0), fx=scale_factor, fy=scale_factor)
 
-#cv2.imshow('Image with Rotation Center', img)
-#cv2.waitKey(0)
-#cv2.destroyAllWindows()
+cv2.imshow('Image with Rotation Center', img)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
 
 def save_rotation_center(filename, rotation_center):
     #print(f"Rotation Center: {rotation_center[0]}, {rotation_center[1]}")
@@ -456,4 +465,12 @@ def save_rotation_center(filename, rotation_center):
         f.write(f"Rotation Center: {rotation_center[0]}, {rotation_center[1]}")
 
 # 调用函数保存旋转中心坐标到文本文件
-save_rotation_center(RootPath + 'rotation_center.txt', x0_optimal)
+#save_rotation_center(RootPath + 'rotation_center.txt', x0_optimal)
+
+#保存旋转中心坐标
+config = configparser.ConfigParser()
+# 设置值
+config['rotation_center'] = {CameraID : f"{x0_optimal[0]}, {x0_optimal[1]}"}
+# 写入文件
+with open(RootPath + 'CalcConfig.ini', 'w') as configfile:
+    config.write(configfile)

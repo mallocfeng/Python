@@ -8,6 +8,7 @@ from TransCoordsToArms import transformCoordinateOffset,transformCoordinatePoint
 from CircleDetect import find_circles
 from ninepointCalibration import map_space_to_pixel,map_pixel_to_space,getlArmPositionOffset,getlImgPositionOffset
 import TxtFileRW as FileRW
+import configparser
 #r'D:\Project3\ICT Automation\picture\6\initial\1.png'
 # 读取图片并进行预处理
 
@@ -594,29 +595,74 @@ CheckMode = arg1
 RootPath = arg3
 StepName = arg4
 
+
+
+# Create a ConfigParser object
+config = configparser.ConfigParser()
+# Read the .ini file
+config.read(RootPath + "CalcConfig.ini")
+
+if not config.has_section("rotation_center"):
+    config.add_section("rotation_center")
+if not config.has_section("FixtureOnBoardPosCheck"):
+    config.add_section("FixtureOnBoardPosCheck")
+if not config.has_section("Std_FixtureTwoLocationPoints"):
+    config.add_section("Std_FixtureTwoLocationPoints")
+if not config.has_section("Actual_FixtureTwoLocationPoints"):
+    config.add_section("Actual_FixtureTwoLocationPoints")
+
+if not config.has_section("rotation_center_ARMLocation"):
+    config.add_section("rotation_center_ARMLocation")
+if not config.has_section("ProdCorrection_ARMLocation"):
+    config.add_section("ProdCorrection_ARMLocation")
+
 Camera1calibrationFilePath = [RootPath + "image_coords_O.txt",RootPath + "arm_coords_O.txt"]
 Camera2calibrationFilePath = [RootPath + "image_coords_fixture.txt",RootPath + "arm_coords_fixture.txt"]
 #originalImgPath = arg2
 #ActualPicPath = arg2
 #sys.exit(1)
 #获得旋转中心
-rotationCenter = read_rotation_center(RootPath +'rotation_center_Camera1.txt')
+camera1_coords_str = config.get("rotation_center", "camera1")
+rotationCenter = tuple(int(x) for x in camera1_coords_str.split(','))
+#camera2_coords = config.get("rotation_center", "camera2")
+#rotationCenter = read_rotation_center(RootPath +'rotation_center_Camera1.txt')
 #destinationPos = [-555.40555,91.560426]
 #第一次用于纠偏机械臂拍照位置
-step1_Position = [-540.915615, 103.134551]
-#第二次拍摄用上相机取得旋转中心机械臂坐标
-#坐标存在问题，需要确认
-ActualArmPosition2 = [-75.527,-449.735]
-ActualArmPosition2 = [-18.234,-458.417] #修改过的新的上相机旋转中心坐标 rotation_center_Camera2.txt也同时更新过 bak目录下的任然是老坐标
+#step1_Position = [-540.915615, 103.134551]
+ProdCorrection_ARMLocation_str = config.get("ProdCorrection_ARMLocation", "camera1")
+step1_Position = tuple(float(x) for x in ProdCorrection_ARMLocation_str.split(','))
+
+#下相机求旋转中心时，机械臂实际位置
+#ActualArmPosition = [-510.040754, 160.754379]
+rotation_center_ARMLocation_str = config.get("rotation_center_ARMLocation", "camera1")
+ActualArmPosition = tuple(float(x) for x in rotation_center_ARMLocation_str.split(','))
+
 #第二次用于纠偏机械臂拍照位置
-step2_Position = [-18.2342,-458.4167]
+#step2_Position = [-18.2342,-458.4167]
+ProdCorrection_ARMLocation_str = config.get("ProdCorrection_ARMLocation", "camera2")
+step2_Position = tuple(float(x) for x in ProdCorrection_ARMLocation_str.split(','))
+
+#第二次拍摄用上相机取得旋转中心机械臂坐标
+#ActualArmPosition2 = [-18.234,-458.417] 
+rotation_center_ARMLocation_str = config.get("rotation_center_ARMLocation", "camera2")
+ActualArmPosition2 = tuple(float(x) for x in rotation_center_ARMLocation_str.split(','))
 
 #测试夹具纠偏，两个标定点的标准位置和实际拍摄位置
 #[(1763, 1039), (1540, 607)]
-file_path = r"D:\Image\25mm\Std_FixtureTwoLocationPoints.txt"
-coordinates = read_coordinates_from_file(file_path)
-Std_IMG_FixtureCirclePoint1 = coordinates[0]
-Std_IMG_FixtureCirclePoint2 = coordinates[1]
+
+
+
+
+
+# file_path = r"D:\Image\25mm\Std_FixtureTwoLocationPoints.txt"
+# coordinates = read_coordinates_from_file(file_path)
+# Std_IMG_FixtureCirclePoint1 = coordinates[0]
+# Std_IMG_FixtureCirclePoint2 = coordinates[1]
+
+Std_IMG_FixtureCirclePoint1_str = config.get("Std_FixtureTwoLocationPoints", "point1")
+Std_IMG_FixtureCirclePoint2_str = config.get("Std_FixtureTwoLocationPoints", "point2")
+Std_IMG_FixtureCirclePoint1 = tuple(int(x) for x in Std_IMG_FixtureCirclePoint1_str.split(','))
+Std_IMG_FixtureCirclePoint2 = tuple(int(x) for x in Std_IMG_FixtureCirclePoint2_str.split(','))
 
 #新夹具偏转后坐标
 #CircleCenter: (1258, 365)
@@ -626,14 +672,19 @@ Std_IMG_FixtureCirclePoint2 = coordinates[1]
 # Std_IMG_FixtureCirclePoint1 = [1628, 452]
 # Std_IMG_FixtureCirclePoint2 = [1840, 891]
 #new
-Std_IMG_FixtureCirclePoint1 = [1258, 365]
-Std_IMG_FixtureCirclePoint2 = [1475, 803]
+# Std_IMG_FixtureCirclePoint1 = [1258, 365]
+# Std_IMG_FixtureCirclePoint2 = [1475, 803]
 
 #[(1665, 1207), (1441, 772)]
-file_path = r"D:\Image\25mm\Actual_FixtureTwoLocationPoints.txt"
-coordinates = read_coordinates_from_file(file_path)
-Std_IMG_FixtureCirclePoint1_Actual = coordinates[0]
-Std_IMG_FixtureCirclePoint2_Actual = coordinates[1]
+# file_path = r"D:\Image\25mm\Actual_FixtureTwoLocationPoints.txt"
+# coordinates = read_coordinates_from_file(file_path)
+# Std_IMG_FixtureCirclePoint1_Actual = coordinates[0]
+# Std_IMG_FixtureCirclePoint2_Actual = coordinates[1]
+
+Std_IMG_FixtureCirclePoint1_Actual_str = config.get("Actual_FixtureTwoLocationPoints", "point1")
+Std_IMG_FixtureCirclePoint2_Actual_str = config.get("Actual_FixtureTwoLocationPoints", "point2")
+Std_IMG_FixtureCirclePoint1_Actual = tuple(int(x) for x in Std_IMG_FixtureCirclePoint1_Actual_str.split(','))
+Std_IMG_FixtureCirclePoint2_Actual = tuple(int(x) for x in Std_IMG_FixtureCirclePoint2_Actual_str.split(','))
 
 #新夹具偏转后坐标
 #CircleCenter: (1426, 484)
@@ -652,11 +703,11 @@ else:
 
 
 #offset = [1551, 647]
-CenterArmPosition = transformCoordinatePoint(Camera1calibrationFilePath[0],Camera1calibrationFilePath[1], rotationCenter)
-print(CenterArmPosition)
+# CenterArmPosition = transformCoordinatePoint(Camera1calibrationFilePath[0],Camera1calibrationFilePath[1], rotationCenter)
+# print(CenterArmPosition)
 CenterArmPosition = map_pixel_to_space(Camera1calibrationFilePath[1],Camera1calibrationFilePath[0],rotationCenter)
 print(CenterArmPosition)
-ActualArmPosition = [-510.040754, 160.754379]
+
 
 OffsetArmCenterValue = getlArmPositionOffset(Camera1calibrationFilePath[1],Camera1calibrationFilePath[0],rotationCenter,ActualArmPosition)
 #OffsetImgCenterValue = getlImgPositionOffset(Camera1calibrationFilePath[1],Camera1calibrationFilePath[0],ActualArmPosition,rotationCenter)
@@ -678,6 +729,7 @@ print(step1_ImageCenterPoint)
 #print(step1_ImageCenterPoint)
 # step1_ImageCenterPoint = map_space_to_pixel(Camera1calibrationFilePath[1],Camera1calibrationFilePath[0],step1_Position,OffsetArmCenterValue)
 # print(step1_ImageCenterPoint)
+#第一次旋转中心变更为第一次纠偏的位置
 rotationCenter = step1_ImageCenterPoint
 
 
@@ -686,9 +738,12 @@ rotationCenter = step1_ImageCenterPoint
 
 
 #上相机的旋转中心
-rotationCenter2 = read_rotation_center(RootPath +'rotation_center_Camera2.txt')
-CenterArmPosition2 = transformCoordinatePoint(Camera2calibrationFilePath[0],Camera2calibrationFilePath[1], rotationCenter2)
-print(CenterArmPosition2)
+#rotationCenter2 = read_rotation_center(RootPath +'rotation_center_Camera2.txt')
+camera2_coords_str = config.get("rotation_center", "camera2")
+rotationCenter2 = tuple(int(x) for x in camera2_coords_str.split(','))
+
+#CenterArmPosition2 = transformCoordinatePoint(Camera2calibrationFilePath[0],Camera2calibrationFilePath[1], rotationCenter2)
+#print(CenterArmPosition2)
 
 #上相机旋转中心对齐上相机拍摄图片像素坐标
 OffsetArmCenterValue2 = getlArmPositionOffset(Camera2calibrationFilePath[1],Camera2calibrationFilePath[0],rotationCenter2,ActualArmPosition2)
@@ -696,11 +751,11 @@ OffsetArmCenterValue2 = getlArmPositionOffset(Camera2calibrationFilePath[1],Came
 
 #OffsetArmCenterValue2 = getlArmPositionOffset(Camera2calibrationFilePath[1],Camera2calibrationFilePath[0],rotationCenter2,ActualArmPosition2)
 #CenterArmPosition2 = map_pixel_to_space(Camera2calibrationFilePath[1],Camera2calibrationFilePath[0],rotationCenter2,OffsetArmCenterValue2)
-CenterArmPosition2 = ActualArmPosition2
+#CenterArmPosition2 = ActualArmPosition2
 
-step2_ImageCenterPoint = map_space_to_pixel(Camera2calibrationFilePath[1],Camera2calibrationFilePath[0],step2_Position,OffsetArmCenterValue2)
-print(step2_ImageCenterPoint)
-rotationCenter2 = step2_ImageCenterPoint
+#step2_ImageCenterPoint = map_space_to_pixel(Camera2calibrationFilePath[1],Camera2calibrationFilePath[0],step2_Position,OffsetArmCenterValue2)
+#print(step2_ImageCenterPoint)
+#rotationCenter2 = step2_ImageCenterPoint
 
 # def fixtureToCamera1_IMGPorint(point):
 #     Std_IMG_FixtureCirclePoint = point

@@ -30,7 +30,7 @@ SPEED_HIGH = 80
 NINE_MOVE_SLEEP_TIME = 1
 
 parser = argparse.ArgumentParser()
-# 配置文件完整路径 C:\\Yandle\\Develop\\Auto-Testing\\config\\model-A.ini'
+# 配置文件完整路径 C:\\Yandle\\Develop\\Auto-Testing\\config\\CalcConfig.ini'
 parser.add_argument('-m', '--m', help='Model Config Path.')
 # 相机编号  1/2
 parser.add_argument('-c', '--c', help='Camera No.')
@@ -47,8 +47,8 @@ args = parser.parse_args()
 
 
 
-# model_path = 'D:\\Image\\25mm\\model-A.ini'
-model_path = 'C:\\Yandle\\Develop\\Auto-Testing\\config\\model-A.ini'
+# model_path = 'D:\\Image\\25mm\\CalcConfig.ini'
+model_path = 'C:\\Yandle\\Develop\\Auto-Testing\\config\\CalcConfig.ini'
 # nine_move_name = 'Camera1_Nine'
 # rotate_move_name = 'Camera1_Rotate'
 # camera_arm_coords_name = 'camera1_arm_coords.txt'

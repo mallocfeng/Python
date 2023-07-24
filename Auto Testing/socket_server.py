@@ -89,12 +89,12 @@ def get_location(branch):
         # 拼接对应步骤的数值
         location_list = []
         for step_no in range(start_step, end_step + 1):
-            section_name = f'Step{step_no}'
+            section_name = f'{step_no}'
             if config.has_section(section_name):
                 location = config.get(section_name, 'location')
                 location_list.append(location)
             else:
-                print(f"Step {step_no} does not exist")
+                print(f"{step_no} does not exist")
 
         # 将数值拼接成字符串
         location_string = ','.join(location_list)
@@ -128,7 +128,7 @@ def get_step_location(step_no):
         config.read(config_file)
 
         # 拼接对应步骤的数值
-        section_name = f'Step{step_no}'
+        section_name = f'{step_no}'
         if config.has_section(section_name):
             return  config.get(section_name, 'location')
         return ''
@@ -217,7 +217,7 @@ try:
 
                         # 将更新后的值转换为字符串
                         updated_location_string = ','.join(str(value) for value in values)
-                        client_socket.send(f'<Recv_Data_Step{step_no}><"{updated_location_string}">'.encode())
+                        client_socket.send(f'<Recv_Data_{step_no}><"{updated_location_string}">'.encode())
                 
                 # 如果客户端断开连接，则退出内部循环
                 if not data:

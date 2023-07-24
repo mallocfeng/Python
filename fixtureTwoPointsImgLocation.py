@@ -5,6 +5,7 @@ from tkinter import Tk
 from CircleDetect import find_circles
 import sys
 import os
+import configparser
 # Global variables
 ix, iy = -1, -1
 rectangles = []
@@ -93,10 +94,11 @@ arg1 = sys.argv[1]  #加载初始图像
 arg2 = sys.argv[2]  #需要检测的点的数量
 arg3 = sys.argv[3]  #检测到的中心点后保存的文件路径，包括路径和文件名
 arg4 = sys.argv[4]  #二值化图像分界数
+arg5 = sys.argv[5]  #配置文件Title
 
 # arg1 = "D:\\Image\\25mm\\ActualBoardFixturePosCheck1.bmp"
 # arg2 = -1
-# arg3 = "D:\\Image\\25mm\\StdBoardOnFixturePointPos1.txt"
+# arg3 = "Point1"
 # arg4 = 191
 
 
@@ -105,10 +107,11 @@ arg4 = sys.argv[4]  #二值化图像分界数
 # print(arg3)
 # print(arg4)
 
-# arg1 = r"D:\Image\25mm\Std_Fixture.bmp"
+# arg1 = r"D:\Image\25mm\Actual_Fixture.bmp"
 # arg2 = 2
-# arg3 = r"D:\Image\25mm\output.txt"
+# arg3 = r"point1|point2"
 # arg4 = 200
+# arg5 = "Actual_FixtureTwoLocationPoints"
 
 # Create a Tk root widget
 root = Tk()
@@ -120,13 +123,22 @@ file_path = arg1
 pointQty = arg2
 SaveFilePath = arg3
 BinarizationPara = int(arg4)
+ConfigFileTitle = arg5
+#FixtureOnBoardPosCheck
+RootPath = os.path.dirname(file_path) + "\\"
+
+config = configparser.ConfigParser()
+config.read(RootPath + "CalcConfig.ini")
 
 #如果是check模式，只需要从StdBoardOnFixturePointPos1.txt
 #和StdBoardOnFixturePointPos2.txt中读取坐标信息，画一个框
 #赋值给rectangles，不需要弹出图片区域选择框
 if(int(pointQty) == -1):
-    xy_coordinates = read_xy_coordinates_from_file(SaveFilePath)
-    x,y = xy_coordinates[0]
+    xy_coordinates_str = config.get(ConfigFileTitle, SaveFilePath)
+    xy_coordinates = tuple(int(x) for x in xy_coordinates_str.split(','))
+
+    #xy_coordinates = read_xy_coordinates_from_file(SaveFilePath)
+    x,y = xy_coordinates
     print(f"DetectCenter: ({x}, {y})")
     rect = (x - 100, y - 100, 200, 200)
     #rect = (x, y, width, height)
@@ -162,24 +174,35 @@ circles,result_img = detect_circles(img,30,65,BinarizationPara)
 # Process the rectangles to find circles
 #with open(RootPath +'Originalcenters_' + StepName + '.txt', 'w') as f:
         # 遍历中心点坐标列表
-try:
-    os.remove(SaveFilePath)
-    print("File deleted successfully.")
-except OSError as e:
-    print("Error deleting the file:", e)
+# try:
+#     os.remove(SaveFilePath)
+#     print("File deleted successfully.")
+# except OSError as e:
+#     print("Error deleting the file:", e)
 
 if(len(circles) != int(pointQty)):
     sys.exit(1)
 
-with open(SaveFilePath, 'w') as f:
-    for center_original in circles:
-        x, y = center_original
-        #x, y = rotate_point([x,y],rotationCenter,-0.8765)
-        #x, y = x - (4.3102619470433865 * 32.2),y + (3.043215099502908 * 32.2)
-        # 将坐标写入文件
-        f.write(f"{x},{y}\n")
-        print(f"CircleCenter: ({x}, {y})")
-f.close        
+
+#with open(SaveFilePath, 'w') as f:
+param_array = SaveFilePath.split('|')
+index = 0
+#如果不存在，在ini文件里先添加
+if not config.has_section(ConfigFileTitle):
+    config.add_section(ConfigFileTitle)
+for center_original in circles:
+    x, y = center_original
+    config.set(ConfigFileTitle, param_array[index], str(x) + "," + str(y))
+    index = index + 1
+    # 将坐标写入文件
+    #f.write(f"{x},{y}\n")
+    print(f"CircleCenter: ({x}, {y})")
+#f.close        
+
+# Write the changes back to the .ini file
+with open(RootPath + "CalcConfig.ini", "w") as config_file:
+    config.write(config_file)
+
 # result_img = cv2.resize(result_img, (img.shape[1] // 2, img.shape[0] // 2))
 # cv2.imshow('image', result_img)
 folder_path = os.path.dirname(arg1)
